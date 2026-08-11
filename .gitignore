@@ -1,0 +1,16 @@
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and local tooling
+.idea/
+.vscode/
+.codex/
+*.swp
+*.tmp
+*.log
+
+# Local test output
+outputs/
+tmp/
