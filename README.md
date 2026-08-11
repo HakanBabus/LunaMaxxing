@@ -1,6 +1,6 @@
 <div align="center">
 
-# My Skills
+# LunaMaxxing
 
 **Quality-first Codex skills built through real use, testing, and iteration.**
 
@@ -14,10 +14,10 @@
 
 ---
 
-This repository contains reusable skills for Codex. The first published skill is **Lunamaxxing**: an adaptive workflow designed to help Luna Max produce stronger results through deliberate framing, evidence gathering, alternative generation, stepwise execution, and explicit verification.
+**LunaMaxxing** is an adaptive Codex workflow designed to help Luna Max produce stronger results through deliberate framing, evidence gathering, alternative generation, stepwise execution, and explicit verification.
 
 > [!IMPORTANT]
-> Lunamaxxing does not claim that Luna becomes intrinsically equivalent to a stronger model. It improves the process around the model so that difficult tasks are less likely to end with a shallow first answer.
+> LunaMaxxing does not claim that Luna becomes intrinsically equivalent to a stronger model. It improves the process around the model so that difficult tasks are less likely to end with a shallow first answer.
 
 ## Available skills
 
@@ -25,9 +25,9 @@ This repository contains reusable skills for Codex. The first published skill is
 | --- | --- | --- |
 | [`lunamaxxing`](skills/lunamaxxing) | Quality-first analysis, planning, implementation, and verification with adaptive depth | Experimental |
 
-## Why Lunamaxxing?
+## Why LunaMaxxing?
 
-Cheap reasoning is useful only when the extra work is structured. Lunamaxxing adds guardrails that make longer runs purposeful:
+Cheap reasoning is useful only when the extra work is structured. LunaMaxxing adds guardrails that make longer runs purposeful:
 
 - **Explicit invocation:** it runs only when the user asks for it.
 - **Current-session first:** it preserves conversation context by default.
@@ -46,7 +46,7 @@ Use the built-in skill installer:
 
 ```text
 Use $skill-installer to install lunamaxxing from
-https://github.com/HakanBabus/My-Skills/tree/main/skills/lunamaxxing
+https://github.com/HakanBabus/LunaMaxxing/tree/main/skills/lunamaxxing
 ```
 
 The installed skill becomes available on the next turn.
@@ -55,7 +55,7 @@ The installed skill becomes available on the next turn.
 
 ```powershell
 python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" `
-  --repo HakanBabus/My-Skills `
+  --repo HakanBabus/LunaMaxxing `
   --path skills/lunamaxxing
 ```
 
@@ -67,9 +67,9 @@ The installer intentionally stops if a skill with the same name already exists.
 Clone the repository, then copy the skill folder into your Codex skills directory:
 
 ```powershell
-git clone https://github.com/HakanBabus/My-Skills.git
+git clone https://github.com/HakanBabus/LunaMaxxing.git
 Copy-Item -Recurse `
-  .\My-Skills\skills\lunamaxxing `
+  .\LunaMaxxing\skills\lunamaxxing `
   "$env:USERPROFILE\.codex\skills\lunamaxxing"
 ```
 
@@ -111,7 +111,7 @@ and produce an implementation-ready plan.
 
 </details>
 
-## How Lunamaxxing works
+## How LunaMaxxing works
 
 1. **Respect authority** — determine whether the request permits analysis, local changes, or external actions.
 2. **Select the route** — continue in the current session by default; dispatch only when explicitly requested.
@@ -136,7 +136,7 @@ The limits are allowances, not targets. The workflow stops early when evidence a
 ## Repository structure
 
 ```text
-My-Skills/
+LunaMaxxing/
 ├─ skills/
 │  └─ lunamaxxing/
 │     ├─ SKILL.md
@@ -159,7 +159,7 @@ My-Skills/
 
 ## Project status
 
-The current version is ready for practical testing and public iteration. Planned additions include reproducible example tasks, Luna Max versus Lunamaxxing comparisons, evaluation tables, and visual result graphs.
+The current version is ready for practical testing and public iteration. Planned additions include reproducible example tasks, Luna Max versus LunaMaxxing comparisons, evaluation tables, and visual result graphs.
 
 ## Contributing
 

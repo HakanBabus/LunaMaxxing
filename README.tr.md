@@ -1,6 +1,6 @@
 <div align="center">
 
-# My Skills
+# LunaMaxxing
 
 **Gerçek kullanım, test ve tekrarlarla geliştirilen kalite odaklı Codex skill'leri.**
 
@@ -14,10 +14,10 @@
 
 ---
 
-Bu depo, Codex için yeniden kullanılabilir skill'ler içerir. İlk yayınlanan skill **Lunamaxxing**'dir: Luna Max'in görevleri daha güçlü bir süreçle çözmesine yardımcı olmak için tasarlanmış uyarlanabilir bir analiz, planlama, uygulama ve doğrulama iş akışı.
+**LunaMaxxing**, Luna Max'in görevleri daha güçlü bir süreçle çözmesine yardımcı olmak için tasarlanmış uyarlanabilir bir Codex analiz, planlama, uygulama ve doğrulama iş akışıdır.
 
 > [!IMPORTANT]
-> Lunamaxxing, Luna'nın yapısal olarak daha güçlü bir modelle eşit hâle geldiğini iddia etmez. Modelin çevresindeki süreci güçlendirerek zor görevlerin yüzeysel bir ilk cevapla bitme olasılığını azaltır.
+> LunaMaxxing, Luna'nın yapısal olarak daha güçlü bir modelle eşit hâle geldiğini iddia etmez. Modelin çevresindeki süreci güçlendirerek zor görevlerin yüzeysel bir ilk cevapla bitme olasılığını azaltır.
 
 ## Mevcut skill'ler
 
@@ -25,9 +25,9 @@ Bu depo, Codex için yeniden kullanılabilir skill'ler içerir. İlk yayınlanan
 | --- | --- | --- |
 | [`lunamaxxing`](skills/lunamaxxing) | Uyarlanabilir derinlikle kalite odaklı analiz, planlama, uygulama ve doğrulama | Deneysel |
 
-## Neden Lunamaxxing?
+## Neden LunaMaxxing?
 
-Ucuz akıl yürütme, ancak ek çalışma düzenli olduğunda değerlidir. Lunamaxxing uzun çalışmaları amaçlı hâle getiren sınırlar ekler:
+Ucuz akıl yürütme, ancak ek çalışma düzenli olduğunda değerlidir. LunaMaxxing uzun çalışmaları amaçlı hâle getiren sınırlar ekler:
 
 - **Açık çağrı:** yalnızca kullanıcı istediğinde çalışır.
 - **Önce mevcut oturum:** konuşma bağlamını varsayılan olarak korur.
@@ -46,7 +46,7 @@ Yerleşik skill yükleyiciyi kullanın:
 
 ```text
 Use $skill-installer to install lunamaxxing from
-https://github.com/HakanBabus/My-Skills/tree/main/skills/lunamaxxing
+https://github.com/HakanBabus/LunaMaxxing/tree/main/skills/lunamaxxing
 ```
 
 Yüklenen skill bir sonraki Codex turunda kullanılabilir olur.
@@ -55,7 +55,7 @@ Yüklenen skill bir sonraki Codex turunda kullanılabilir olur.
 
 ```powershell
 python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" `
-  --repo HakanBabus/My-Skills `
+  --repo HakanBabus/LunaMaxxing `
   --path skills/lunamaxxing
 ```
 
@@ -67,9 +67,9 @@ Aynı isimde bir skill zaten varsa yükleyici güvenli biçimde durur.
 Depoyu klonlayın ve skill klasörünü Codex skill dizininize kopyalayın:
 
 ```powershell
-git clone https://github.com/HakanBabus/My-Skills.git
+git clone https://github.com/HakanBabus/LunaMaxxing.git
 Copy-Item -Recurse `
-  .\My-Skills\skills\lunamaxxing `
+  .\LunaMaxxing\skills\lunamaxxing `
   "$env:USERPROFILE\.codex\skills\lunamaxxing"
 ```
 
@@ -111,7 +111,7 @@ and produce an implementation-ready plan.
 
 </details>
 
-## Lunamaxxing nasıl çalışır?
+## LunaMaxxing nasıl çalışır?
 
 1. **Yetkiyi korur** — isteğin yalnızca analiz, yerel değişiklik veya harici işlem yetkilerinden hangisini verdiğini belirler.
 2. **Rotayı seçer** — varsayılan olarak mevcut oturumda devam eder; yalnızca açıkça istenirse worker başlatır.
@@ -136,7 +136,7 @@ Bu sınırlar hedef değil, üst limittir. Kanıt kabul kriterlerini destekliyor
 ## Depo yapısı
 
 ```text
-My-Skills/
+LunaMaxxing/
 ├─ skills/
 │  └─ lunamaxxing/
 │     ├─ SKILL.md
@@ -159,7 +159,7 @@ My-Skills/
 
 ## Proje durumu
 
-Mevcut sürüm pratik test ve herkese açık geliştirme için hazırdır. Tekrarlanabilir örnek görevler, Luna Max ile Lunamaxxing karşılaştırmaları, değerlendirme tabloları ve görsel sonuç grafikleri daha sonra eklenecektir.
+Mevcut sürüm pratik test ve herkese açık geliştirme için hazırdır. Tekrarlanabilir örnek görevler, Luna Max ile LunaMaxxing karşılaştırmaları, değerlendirme tabloları ve görsel sonuç grafikleri daha sonra eklenecektir.
 
 ## Katkıda bulunma
 

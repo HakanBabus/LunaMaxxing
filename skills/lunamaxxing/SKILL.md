@@ -1,9 +1,9 @@
 ---
 name: lunamaxxing
-description: Run difficult, ambiguous, creative, research-heavy, product, UI/UX, coding, debugging, planning, or implementation tasks through an adaptive Luna Max-style workflow with explicit quality gates. Use only when the user explicitly invokes lunamaxxing, asks for Luna Max, or directly requests this quality-first workflow. Continue in the current session by default; dispatch exactly one pinned Luna Max CLI worker only when the user explicitly requests a new worker, isolated session, or CLI dispatch.
+description: Run difficult, ambiguous, creative, research-heavy, product, UI/UX, coding, debugging, planning, or implementation tasks through an adaptive Luna Max-style workflow with explicit quality gates. Use only when the user explicitly invokes $lunamaxxing, asks for LunaMaxxing or Luna Max, or directly requests this quality-first workflow. Continue in the current session by default; dispatch exactly one pinned Luna Max CLI worker only when the user explicitly requests a new worker, isolated session, or CLI dispatch.
 ---
 
-# Lunamaxxing
+# LunaMaxxing
 
 Apply `references/luna-max-contract.md`. Preserve the current conversation and worker by default. If runtime metadata verifies **`gpt-5.6-luna`** with **`max`** reasoning, report direct Luna Max; otherwise continue in the current session without claiming Luna Max. Dispatch a pinned Luna Max CLI worker only after an explicit request.
 

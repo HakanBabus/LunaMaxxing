@@ -1,5 +1,5 @@
 interface:
-  display_name: "Lunamaxxing"
+  display_name: "LunaMaxxing"
   short_description: "Adaptive Luna workflow with explicit quality gates"
   default_prompt: "Use $lunamaxxing to frame, explore, decide, execute, and verify this task with an adaptive quality budget in the current session."
 policy:
