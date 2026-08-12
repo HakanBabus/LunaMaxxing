@@ -25,7 +25,8 @@ $skillPath = Join-Path $skillRoot 'SKILL.md'
 $promptPath = [System.IO.Path]::GetTempFileName()
 $fakeBinDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ('lunamaxxing-fake-bin-' + [guid]::NewGuid().ToString('N'))
 $capturePath = Join-Path $fakeBinDirectory 'captured-prompt.bin'
-$fakeCodexPath = Join-Path $fakeBinDirectory 'codex.cmd'
+$isWindowsHost = $env:OS -eq 'Windows_NT'
+$fakeCodexPath = Join-Path $fakeBinDirectory $(if ($isWindowsHost) { 'codex.cmd' } else { 'codex' })
 $outputDirectoryName = 'lunamaxxing-test-output-' + [guid]::NewGuid().ToString('N')
 $outputRelativePath = Join-Path $outputDirectoryName 'answer.md'
 $outputDirectoryPath = Join-Path $repoRoot $outputDirectoryName
@@ -41,7 +42,14 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 try {
     [System.IO.File]::WriteAllText($promptPath, $prompt, $utf8NoBom)
     New-Item -ItemType Directory -Path $fakeBinDirectory -Force | Out-Null
-    [System.IO.File]::WriteAllText($fakeCodexPath, "@echo off`r`nmore > `"%LUNAMAXXING_CAPTURE_PATH%`"`r`nexit /b 0`r`n", [System.Text.Encoding]::ASCII)
+    if ($isWindowsHost) {
+        [System.IO.File]::WriteAllText($fakeCodexPath, "@echo off`r`nmore > `"%LUNAMAXXING_CAPTURE_PATH%`"`r`nexit /b 0`r`n", [System.Text.Encoding]::ASCII)
+    }
+    else {
+        [System.IO.File]::WriteAllText($fakeCodexPath, "#!/bin/sh`ncat > `"`$LUNAMAXXING_CAPTURE_PATH`"`n", [System.Text.Encoding]::ASCII)
+        & chmod +x -- $fakeCodexPath
+        if ($LASTEXITCODE -ne 0) { throw 'Unable to make the fake Codex executable.' }
+    }
 
     Push-Location ([System.IO.Path]::GetTempPath())
     try {
