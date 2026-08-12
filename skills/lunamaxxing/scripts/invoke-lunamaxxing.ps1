@@ -42,11 +42,11 @@ $codexCommand = Get-Command codex -ErrorAction Stop
 $resolvedWorkdir = (Resolve-Path -LiteralPath $Workdir -ErrorAction Stop).Path
 $resolvedContract = (Resolve-Path -LiteralPath $contractPath -ErrorAction Stop).Path
 $resolvedModules = (Resolve-Path -LiteralPath $modulesPath -ErrorAction Stop).Path
-$contract = Get-Content -Raw -LiteralPath $resolvedContract
+$contract = Get-Content -Raw -Encoding UTF8 -LiteralPath $resolvedContract
 
 if ($PSCmdlet.ParameterSetName -eq 'File') {
     $resolvedPromptFile = (Resolve-Path -LiteralPath $PromptFile -ErrorAction Stop).Path
-    $taskPrompt = Get-Content -Raw -LiteralPath $resolvedPromptFile
+    $taskPrompt = Get-Content -Raw -Encoding UTF8 -LiteralPath $resolvedPromptFile
     $promptSource = $resolvedPromptFile
 }
 else {
