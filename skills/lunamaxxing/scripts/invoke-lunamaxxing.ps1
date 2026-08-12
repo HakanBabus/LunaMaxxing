@@ -154,8 +154,35 @@ if ($outputDirectoryToCreate -and -not (Test-Path -LiteralPath $outputDirectoryT
     New-Item -ItemType Directory -Path $outputDirectoryToCreate -Force | Out-Null
 }
 
-$effectivePrompt | & $codexCommand.Source @arguments
-$workerExitCode = $LASTEXITCODE
+$startInfo = New-Object System.Diagnostics.ProcessStartInfo
+$startInfo.FileName = $codexCommand.Source
+$startInfo.UseShellExecute = $false
+$startInfo.RedirectStandardInput = $true
+$startInfo.CreateNoWindow = $true
+
+if ($startInfo.PSObject.Properties.Name -contains 'ArgumentList') {
+    foreach ($argument in $arguments) {
+        [void]$startInfo.ArgumentList.Add([string]$argument)
+    }
+}
+else {
+    $quotedArguments = foreach ($argument in $arguments) {
+        '"' + ([string]$argument -replace '(\\*)"', '$1$1\\"' -replace '(\\*)$', '$1$1') + '"'
+    }
+    $startInfo.Arguments = $quotedArguments -join ' '
+}
+
+$workerProcess = New-Object System.Diagnostics.Process
+$workerProcess.StartInfo = $startInfo
+if (-not $workerProcess.Start()) {
+    throw 'Luna Max worker process did not start.'
+}
+
+$promptBytes = $utf8NoBom.GetBytes($effectivePrompt)
+$workerProcess.StandardInput.BaseStream.Write($promptBytes, 0, $promptBytes.Length)
+$workerProcess.StandardInput.Close()
+$workerProcess.WaitForExit()
+$workerExitCode = $workerProcess.ExitCode
 
 if ($workerExitCode -ne 0) {
     throw "Luna Max worker failed with exit code $workerExitCode. Do not fall back to another model or reasoning effort."

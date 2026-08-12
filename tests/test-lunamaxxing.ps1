@@ -23,6 +23,9 @@ $launcher = Join-Path (Join-Path $skillRoot 'scripts') 'invoke-lunamaxxing.ps1'
 $contractPath = Join-Path (Join-Path $skillRoot 'references') 'luna-max-contract.md'
 $skillPath = Join-Path $skillRoot 'SKILL.md'
 $promptPath = [System.IO.Path]::GetTempFileName()
+$fakeBinDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ('lunamaxxing-fake-bin-' + [guid]::NewGuid().ToString('N'))
+$capturePath = Join-Path $fakeBinDirectory 'captured-prompt.bin'
+$fakeCodexPath = Join-Path $fakeBinDirectory 'codex.cmd'
 $outputDirectoryName = 'lunamaxxing-test-output'
 $outputRelativePath = Join-Path $outputDirectoryName 'answer.md'
 $marker = 'LUNAMAXXING_WORKER_ACTIVE=true'
@@ -36,6 +39,8 @@ $utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 try {
     [System.IO.File]::WriteAllText($promptPath, $prompt, $utf8NoBom)
+    New-Item -ItemType Directory -Path $fakeBinDirectory -Force | Out-Null
+    [System.IO.File]::WriteAllText($fakeCodexPath, "@echo off`r`nmore > `"%LUNAMAXXING_CAPTURE_PATH%`"`r`nexit /b 0`r`n", [System.Text.Encoding]::ASCII)
 
     Push-Location ([System.IO.Path]::GetTempPath())
     try {
@@ -66,6 +71,23 @@ try {
     Assert-True ($outputRun.OutputLastMessage -eq (Join-Path $repoRoot $outputRelativePath)) 'relative output path must resolve from workdir'
     Assert-True (-not (Test-Path -LiteralPath (Join-Path $repoRoot $outputDirectoryName))) 'dry-run must not create the output directory'
 
+    $originalPath = $env:Path
+    $originalCapturePath = $env:LUNAMAXXING_CAPTURE_PATH
+    try {
+        $env:Path = "$fakeBinDirectory;$originalPath"
+        $env:LUNAMAXXING_CAPTURE_PATH = $capturePath
+        & $launcher -Prompt $prompt -Workdir $repoRoot -Sandbox read-only
+    }
+    finally {
+        $env:Path = $originalPath
+        $env:LUNAMAXXING_CAPTURE_PATH = $originalCapturePath
+    }
+
+    Assert-True (Test-Path -LiteralPath $capturePath -PathType Leaf) 'launcher must write a prompt to native stdin'
+    $capturedPrompt = [System.Text.Encoding]::UTF8.GetString([System.IO.File]::ReadAllBytes($capturePath))
+    Assert-True ($capturedPrompt -match [regex]::Escape($unicodeSample)) 'native worker stdin must preserve contract Unicode'
+    Assert-True ($capturedPrompt -match '# User Task Packet') 'native worker stdin must contain the task boundary'
+
     $contract = Get-Content -Raw -Encoding UTF8 -LiteralPath $contractPath
     $skill = Get-Content -Raw -Encoding UTF8 -LiteralPath $skillPath
     Assert-True ($contract -match 'Start at \*\*0\*\*') 'contract must include the scoring algorithm'
@@ -79,5 +101,8 @@ try {
 finally {
     if (Test-Path -LiteralPath $promptPath) {
         Remove-Item -LiteralPath $promptPath -Force
+    }
+    if (Test-Path -LiteralPath $fakeBinDirectory) {
+        Remove-Item -LiteralPath $fakeBinDirectory -Recurse -Force
     }
 }
