@@ -25,33 +25,7 @@ Do not infer the model from writing style, self-description, price, latency, or 
 
 ## Set the reasoning budget
 
-Start at **0** and add one point for each condition that applies:
-
-- The desired outcome or acceptance criteria are subjective or unclear.
-- More than one plausible solution would materially change the result.
-- The root cause is unknown or available evidence conflicts.
-- The work affects multiple components or user flows, or has meaningful regression risk.
-- Success requires real behavior or visual verification across states or viewports.
-
-Map the score to a budget:
-
-- **0–1 — Light:** Use a compact quality brief, one viable direction, a focused plan, and targeted validation.
-- **2–3 — Standard:** Use a full quality brief, relevant alternatives, an evidence baseline, a challenge pass, and every applicable validation class.
-- **4–5 — Deep:** Require three distinct directions, separated generation and critique passes, a pre-mortem, adversarial review, and explicit confidence reporting.
-
-When uncertain, start at the lower reasonable level. Escalate one level only when evidence contradicts the current direction or validation exposes a material gap. The user may explicitly request a level. Do not increase depth because a task is merely long or touches many files.
-
-### Limit improvement loops
-
-Count only focused correction rounds after the first implementation:
-
-| Budget | Default maximum |
-| --- | ---: |
-| Light | 1 correction round |
-| Standard | 2 correction rounds |
-| Deep | 3 correction rounds |
-
-Do not spend the allowance automatically. Continue only when an acceptance criterion fails, new evidence reveals a material gap, or a correction causes a regression. “Could be slightly nicer” alone is not a reason to continue.
+Use the scoring algorithm, **Light/Standard/Deep** mapping, escalation rule, and correction-round limits defined in Phase 0 of `references/luna-max-contract.md`. Treat that contract as the single source of truth for both direct and dispatched execution.
 
 ## Load only relevant modules
 
