@@ -12,3 +12,19 @@ Thanks for helping improve these Codex skills.
 6. Explain the behavior change and the evidence used to validate it.
 
 Small, focused pull requests are easiest to review.
+
+## Tests
+
+Run the deterministic launcher and contract suite from the repository root:
+
+```powershell
+pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
+```
+
+On Windows without PowerShell 7, use Windows PowerShell:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\test-lunamaxxing.ps1
+```
+
+The same suite runs on Windows and Ubuntu for every push and pull request.

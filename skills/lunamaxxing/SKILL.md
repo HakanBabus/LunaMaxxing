@@ -53,17 +53,27 @@ Treat the current agent as launcher and verifier, not substantive executor.
 1. Create a UTF-8 task packet with the exact outcome, scope, relevant paths and evidence, constraints, approval boundaries, acceptance criteria, forbidden actions, and deliverable format.
 2. Preserve the user’s goal. Do not leak an intended answer, force a preferred implementation, paste unrelated history, or request hidden chain-of-thought.
 3. Use `read-only` for analysis, research, review, diagnosis, or planning-only work. Use `workspace-write` only for authorized local creation or changes.
-4. Run `scripts/invoke-lunamaxxing.ps1` with `-DryRun`. Confirm `Model=gpt-5.6-luna`, `Reasoning=max`, `WorkerMarker=LUNAMAXXING_WORKER_ACTIVE=true`, `ModelSessionStarted=false`, and correct workdir, prompt source, modules directory, sandbox, and output path.
-5. Run the real worker only after dry-run validation. If CLI execution, Luna availability, permissions, or sandboxing blocks it, report the blocker; never silently fall back.
+4. Resolve the launcher from the absolute directory containing this loaded `SKILL.md`; never resolve it relative to the user's project. Prefer `pwsh` and fall back to `powershell` when available.
+5. Run the launcher with `-DryRun`. Confirm `Model=gpt-5.6-luna`, `Reasoning=max`, `WorkerMarker=LUNAMAXXING_WORKER_ACTIVE=true`, `SessionMode=one-shot-ephemeral`, `Resumable=false`, `UserConfigMode=inherited`, `ModelSessionStarted=false`, and correct workdir, prompt source, modules directory, sandbox, and output path.
+6. Run the real worker only after dry-run validation. If CLI execution, Luna availability, permissions, or sandboxing blocks it, report the blocker; never silently fall back.
 
-The launcher prepends the worker marker, contract, and discoverable module directory. Do not duplicate them in the task packet.
+The launcher prepends the worker marker, contract, and discoverable module directory. Do not duplicate them in the task packet. Each dispatch is one-shot: `--ephemeral` deliberately prevents later resume. One explicit worker request authorizes one worker only.
+
+The worker inherits the user's Codex configuration by default so configured MCP servers and preferences remain available. Use `-IsolatedConfig` only when the user explicitly requests config isolation or the task packet requires it; this adds `--ignore-user-config` without changing authentication.
 
 ## Dispatch command
 
 Use a prompt file to avoid quoting loss:
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\invoke-lunamaxxing.ps1 `
+$skillRoot = Split-Path -Parent '<absolute path of the loaded lunamaxxing SKILL.md>'
+$launcher = Join-Path (Join-Path $skillRoot 'scripts') 'invoke-lunamaxxing.ps1'
+$shell = Get-Command pwsh -ErrorAction SilentlyContinue
+if (-not $shell) { $shell = Get-Command powershell -ErrorAction Stop }
+$shellArgs = @('-NoProfile')
+if ($shell.Name -like 'powershell*') { $shellArgs += @('-ExecutionPolicy', 'Bypass') }
+
+& $shell.Source @shellArgs -File $launcher `
   -PromptFile <absolute-prompt-path> `
   -Workdir <absolute-workspace-path> `
   -Sandbox read-only `
@@ -71,7 +81,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\invoke-lunamaxxing
   -DryRun
 ```
 
-Repeat without `-DryRun` after validating the JSON. Use `workspace-write` only when authorized.
+Repeat without `-DryRun` after validating the JSON. Use `workspace-write` only when authorized. Add `-IsolatedConfig` only under the explicit isolation rule above.
 
 ## Preserve boundaries
 
@@ -81,7 +91,7 @@ Repeat without `-DryRun` after validating the JSON. Use `workspace-write` only w
 
 ## Verify and report
 
-Inspect actual artifacts and behavior, rerun the smallest relevant deterministic checks, and compare the outcome with every acceptance criterion. If acceptance fails, iterate in the same session or resumable worker; opening a fresh worker still requires an explicit request.
+Inspect actual artifacts and behavior, rerun the smallest relevant deterministic checks, and compare the outcome with every acceptance criterion. If direct execution fails acceptance, iterate in the same session within the correction limit. If a one-shot worker has exited with a material gap, report it and request direction before either continuing substantively in the parent or dispatching another worker.
 
 Report the route as `direct Luna Max`, `current-session direct (Luna Max unverified)`, or `<parent> -> pinned Luna Max worker`; include reasoning budget, requested model/effort, worker count, retries, sandbox, deliverables, validation classes completed, decision confidence, and remaining uncertainty.
 

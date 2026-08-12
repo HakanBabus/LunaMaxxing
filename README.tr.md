@@ -32,6 +32,7 @@ Ucuz akıl yürütme, ancak ek çalışma düzenli olduğunda değerlidir. LunaM
 - **Açık çağrı:** yalnızca kullanıcı istediğinde çalışır.
 - **Önce mevcut oturum:** konuşma bağlamını varsayılan olarak korur.
 - **Kontrollü worker:** sabitlenmiş Luna Max CLI worker yalnızca açıkça istenirse başlatılır.
+- **Config'i koruyan worker:** ayrı worker, izolasyon açıkça seçilmedikçe kullanıcının Codex ayarlarını devralır.
 - **Uyarlanabilir derinlik:** basit `0–5` puanı Light, Standard veya Deep seviyesini seçer.
 - **Sınırlı tekrar:** sonsuz cilalamayı önlemek için düzeltme turları sınırlandırılır.
 - **Yetki sınırları:** analiz görevi sessizce uygulamaya veya harici işleme dönüşmez.
@@ -92,6 +93,8 @@ Farklı bir worker açıkça istenmediği sürece skill mevcut oturumda kalır:
 Use $lunamaxxing in a separate pinned Luna Max CLI worker for this task.
 ```
 
+Ayrı worker'lar bilinçli olarak **tek seferliktir ve resume edilemez**. Her açık istek yalnızca bir ephemeral worker'a yetki verir. Normal Codex config'i, tanımlı MCP sunucuları ve tercihler varsayılan olarak devralınır; config izolasyonu gerekiyorsa ayrıca açıkça istenmelidir.
+
 <details>
 <summary><strong>Daha fazla örnek prompt</strong></summary>
 
@@ -137,12 +140,14 @@ Bu sınırlar hedef değil, üst limittir. Kanıt kabul kriterlerini destekliyor
 
 ```text
 LunaMaxxing/
+├─ .github/workflows/test.yml
 ├─ skills/
 │  └─ lunamaxxing/
 │     ├─ SKILL.md
 │     ├─ agents/openai.yaml
 │     ├─ references/
 │     └─ scripts/
+├─ tests/test-lunamaxxing.ps1
 ├─ README.md
 ├─ README.tr.md
 ├─ CONTRIBUTING.md
@@ -154,6 +159,8 @@ LunaMaxxing/
 - Skill; yıkıcı işlemler, satın alma, kimlik bilgisi kullanımı, production değişikliği veya kapsam genişletme yetkisi vermez.
 - Model kimliği yalnızca çalışma zamanı verisi doğruladığında veya launcher sabitlediğinde raporlanır.
 - Sırf daha fazla düşünme süresi kazanmak için ayrı worker oluşturulmaz.
+- Ayrı worker'lar ephemeral ve tek seferliktir; kapandıktan sonra resume edilemez.
+- Kullanıcının Codex config'i varsayılan olarak devralınır; izole config opt-in'dir.
 - Bazı CLI parametreleri ve model kimlikleri kullanıcının Codex sürümüne ve hesap erişimine bağlı olabilir.
 - Proje deneyseldir; yüksek etkili işlerde kullanmadan önce iş akışını inceleyin.
 

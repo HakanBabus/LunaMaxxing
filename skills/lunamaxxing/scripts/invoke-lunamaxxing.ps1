@@ -23,6 +23,9 @@ param(
     [switch]$Json,
 
     [Parameter()]
+    [switch]$IsolatedConfig,
+
+    [Parameter()]
     [switch]$DryRun
 )
 
@@ -35,10 +38,10 @@ $fixedModel = 'gpt-5.6-luna'
 $fixedReasoning = 'max'
 $workerMarker = 'LUNAMAXXING_WORKER_ACTIVE=true'
 $skillRoot = Split-Path -Parent $PSScriptRoot
-$contractPath = Join-Path $skillRoot 'references\luna-max-contract.md'
 $modulesPath = Join-Path $skillRoot 'references'
+$contractPath = Join-Path $modulesPath 'luna-max-contract.md'
 
-$codexCommand = Get-Command codex -ErrorAction Stop
+$codexCommand = Get-Command codex -ErrorAction SilentlyContinue
 $resolvedWorkdir = (Resolve-Path -LiteralPath $Workdir -ErrorAction Stop).Path
 $resolvedContract = (Resolve-Path -LiteralPath $contractPath -ErrorAction Stop).Path
 $resolvedModules = (Resolve-Path -LiteralPath $modulesPath -ErrorAction Stop).Path
@@ -58,7 +61,7 @@ if ([string]::IsNullOrWhiteSpace($taskPrompt)) {
     throw 'Task prompt must contain non-whitespace text.'
 }
 
-$effectivePrompt = @"
+$routingBlock = @"
 # Lunamaxxing Runtime Routing
 
 $workerMarker
@@ -67,6 +70,10 @@ PINNED_REASONING_EFFORT=$fixedReasoning
 LUNAMAXXING_MODULES_DIR=$resolvedModules
 
 This routing block was injected by the launcher before the user task packet. Execute the task directly in this session. Never invoke the lunamaxxing launcher or create another worker. Classify the task and read every matching quality module from LUNAMAXXING_MODULES_DIR before substantive work.
+"@
+
+$effectivePrompt = @"
+$routingBlock
 
 ---
 
@@ -83,12 +90,15 @@ $arguments = @(
     'exec'
     '--ephemeral'
     '--skip-git-repo-check'
-    '--ignore-user-config'
     '-s', $Sandbox
     '-C', $resolvedWorkdir
     '-m', $fixedModel
     '-c', "model_reasoning_effort=$fixedReasoning"
 )
+
+if ($IsolatedConfig) {
+    $arguments += '--ignore-user-config'
+}
 
 if ($Json) {
     $arguments += '--json'
@@ -121,12 +131,23 @@ if ($DryRun) {
         ModulesDirectory = $resolvedModules
         TaskPromptCharacters = $taskPrompt.Length
         EffectivePromptCharacters = $effectivePrompt.Length
+        TrustedWorkerMarkerCount = ([regex]::Matches($routingBlock, [regex]::Escape($workerMarker))).Count
+        UserTaskContainsWorkerMarker = $taskPrompt.Contains($workerMarker)
+        SessionMode = 'one-shot-ephemeral'
+        Resumable = $false
+        IsolatedConfig = [bool]$IsolatedConfig
+        UserConfigMode = if ($IsolatedConfig) { 'ignored' } else { 'inherited' }
         OutputLastMessage = $resolvedOutput
-        Executable = $codexCommand.Source
+        CodexAvailable = ($null -ne $codexCommand)
+        Executable = if ($codexCommand) { $codexCommand.Source } else { $null }
         Arguments = $arguments
         ModelSessionStarted = $false
     } | ConvertTo-Json -Depth 4
     return
+}
+
+if (-not $codexCommand) {
+    throw 'Codex CLI was not found. Install Codex or add the codex executable to PATH before starting a Luna Max worker.'
 }
 
 $effectivePrompt | & $codexCommand.Source @arguments

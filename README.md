@@ -32,6 +32,7 @@ Cheap reasoning is useful only when the extra work is structured. LunaMaxxing ad
 - **Explicit invocation:** it runs only when the user asks for it.
 - **Current-session first:** it preserves conversation context by default.
 - **Controlled worker dispatch:** a pinned Luna Max CLI worker is started only when explicitly requested.
+- **Config-preserving dispatch:** separate workers inherit user Codex configuration unless isolation is explicitly selected.
 - **Adaptive depth:** a simple `0–5` score chooses Light, Standard, or Deep reasoning.
 - **Bounded iteration:** correction rounds are capped to prevent endless polishing.
 - **Authority boundaries:** analysis does not silently become implementation or an external action.
@@ -92,6 +93,8 @@ The skill stays in the current session unless you explicitly request a separate 
 Use $lunamaxxing in a separate pinned Luna Max CLI worker for this task.
 ```
 
+Separate workers are intentionally **one-shot and non-resumable**. Each explicit request authorizes one ephemeral worker. They inherit your normal Codex configuration, including configured MCP servers and preferences; request isolated config explicitly when that is the desired constraint.
+
 <details>
 <summary><strong>More example prompts</strong></summary>
 
@@ -137,12 +140,14 @@ The limits are allowances, not targets. The workflow stops early when evidence a
 
 ```text
 LunaMaxxing/
+├─ .github/workflows/test.yml
 ├─ skills/
 │  └─ lunamaxxing/
 │     ├─ SKILL.md
 │     ├─ agents/openai.yaml
 │     ├─ references/
 │     └─ scripts/
+├─ tests/test-lunamaxxing.ps1
 ├─ README.md
 ├─ README.tr.md
 ├─ CONTRIBUTING.md
@@ -154,6 +159,8 @@ LunaMaxxing/
 - The skill is not authority for destructive actions, purchases, credential use, production changes, or scope expansion.
 - Model identity is reported only when runtime metadata verifies it or the launcher pins it.
 - A separate worker is never created merely to gain more thinking time.
+- Separate workers are ephemeral one-shot runs and cannot be resumed after exit.
+- User Codex configuration is inherited by default; isolated config is opt-in.
 - Some CLI flags and model identifiers may depend on the user's Codex version and account availability.
 - The project is experimental; inspect the workflow before using it on high-impact work.
 
