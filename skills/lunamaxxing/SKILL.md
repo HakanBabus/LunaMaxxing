@@ -13,10 +13,10 @@ Read `references/delegation-playbook.md` before delegating. For DIRECT work, fol
 
 - Run only after explicit skill invocation. Keep `allow_implicit_invocation: false`.
 - Main owns context, decisions, implementation by default, validation, and the final response.
-- Use **0–2 native subagents by default**. Across one `$lunamaxxing` run, never exceed **3 total child sessions** or **3 concurrent children**. Reviewers, retries, and follow-ups all consume this same total budget.
+- Use **0–2 native subagents by default**. Across one `$lunamaxxing` run, never exceed **3 total child sessions** or **3 concurrent children**. Every spawn and follow-up turn consumes this same total budget, including reviewers and retries.
 - Do not allow recursive delegation. Tell every subagent not to create another agent.
 - Delegate for new information, independent verification, or meaningful parallel progress—not ceremony.
-- Every subagent is read-only. **Main Luna Max is the only writer.** Delegation is for investigation and review, never parallel implementation.
+- Every subagent is read-only. **Main Luna Max is the only writer.** Child work is limited to investigation and review.
 - Delegate only when the native runtime can explicitly select **`gpt-5.6-luna` with `xhigh` reasoning** for the child and reliably verify that selection, preferably through returned runtime metadata. A requested override is not proof. If selection cannot be enforced or verified, choose DIRECT. **Unverified xhigh = no delegation.**
 - Never create a separate process to obtain a preferred child model.
 - Preserve repository instructions, user work, authorization boundaries, and evidence integrity.

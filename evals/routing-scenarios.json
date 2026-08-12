@@ -3,26 +3,106 @@
     {
       "id": "tiny_typo",
       "prompt": "Fix a typo in one known file.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": true,
+      "user_forbids_subagents": false,
+      "delegation_adds_value": false,
+      "independent_workstreams": 1,
       "expected_route": "DIRECT",
-      "expected_max_subagents": 0,
-      "writer_policy": "main_default",
-      "delegation_reason": "No isolated investigation would add useful evidence."
+      "expected_max_children": 0,
+      "writer_policy": "main_only"
+    },
+    {
+      "id": "large_linear_single_file_refactor",
+      "prompt": "Perform a large but linear refactor in one file with a known target design.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": true,
+      "user_forbids_subagents": false,
+      "delegation_adds_value": false,
+      "independent_workstreams": 1,
+      "expected_route": "DIRECT",
+      "expected_max_children": 0,
+      "writer_policy": "main_only"
+    },
+    {
+      "id": "clear_root_cause_bug",
+      "prompt": "Fix a reproduced bug whose root cause and affected line are already proven.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": true,
+      "user_forbids_subagents": false,
+      "delegation_adds_value": false,
+      "independent_workstreams": 1,
+      "expected_route": "DIRECT",
+      "expected_max_children": 0,
+      "writer_policy": "main_only"
     },
     {
       "id": "unclear_state_bug",
       "prompt": "Investigate intermittent state loss across navigation and async saves.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": true,
+      "user_forbids_subagents": false,
+      "delegation_adds_value": true,
+      "independent_workstreams": 2,
       "expected_route": "DELEGATED",
-      "expected_max_subagents": 2,
-      "writer_policy": "main_default",
-      "delegation_reason": "Independent tracing and falsification can reduce root-cause uncertainty."
+      "expected_max_children": 2,
+      "writer_policy": "main_only"
     },
     {
       "id": "repository_wide_audit",
-      "prompt": "Audit runtime flow, architecture boundaries, and regression coverage across the repository.",
+      "prompt": "Audit runtime flow, architecture boundaries, and regression coverage as independent lanes.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": true,
+      "user_forbids_subagents": false,
+      "delegation_adds_value": true,
+      "independent_workstreams": 3,
       "expected_route": "FANOUT",
-      "expected_max_subagents": 3,
-      "writer_policy": "main_default",
-      "delegation_reason": "Three non-overlapping information lanes provide meaningful parallel progress."
+      "expected_max_children": 3,
+      "writer_policy": "main_only"
+    },
+    {
+      "id": "user_forbids_subagents",
+      "prompt": "Audit the repository, but do not use subagents.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": true,
+      "user_forbids_subagents": true,
+      "delegation_adds_value": true,
+      "independent_workstreams": 3,
+      "expected_route": "DIRECT",
+      "expected_max_children": 0,
+      "writer_policy": "main_only"
+    },
+    {
+      "id": "difficult_indivisible_task",
+      "prompt": "Solve a difficult proof-like task with one tightly coupled reasoning path.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": true,
+      "user_forbids_subagents": false,
+      "delegation_adds_value": false,
+      "independent_workstreams": 1,
+      "expected_route": "DIRECT",
+      "expected_max_children": 0,
+      "writer_policy": "main_only"
+    },
+    {
+      "id": "unverified_xhigh_audit",
+      "prompt": "Audit three independent subsystems when child effort metadata cannot be verified.",
+      "native_subagents_available": true,
+      "luna_xhigh_selectable": true,
+      "luna_xhigh_verifiable": false,
+      "user_forbids_subagents": false,
+      "delegation_adds_value": true,
+      "independent_workstreams": 3,
+      "expected_route": "DIRECT",
+      "expected_max_children": 0,
+      "writer_policy": "main_only"
     }
   ]
 }

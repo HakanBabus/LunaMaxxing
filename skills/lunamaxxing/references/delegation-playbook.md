@@ -50,7 +50,7 @@ Main checks material claims before implementation or final reporting.
 
 - `DONE` → use the receipt after checking material claims.
 - `DONE_WITH_CONCERNS` → main evaluates the concerns before using the receipt.
-- `NEEDS_CONTEXT` → main may send at most one bounded follow-up to the same child; it consumes no new session, but the original child still counts toward the total budget.
+- `NEEDS_CONTEXT` → main may send at most one bounded follow-up to the same child; that follow-up consumes one unit of the same total child-session budget.
 - `BLOCKED` or failed → do not open an automatic replacement child.
 - Treat a completed child as closed.
 - A failure never grants another child session or resets the maximum of 3 total sessions.
@@ -82,4 +82,4 @@ Main merges duplicates, rejects speculation, verifies evidence, calibrates sever
 
 ## Writer ownership
 
-Every child is read-only. Main Luna Max is the only writer and owns all implementation, file changes, validation, and final reporting. LunaMaxxing supports parallel investigation and review, not parallel coding.
+Every child is read-only. Main Luna Max is the only writer and owns all implementation, file changes, validation, and final reporting. Concurrent child work is limited to investigation and review.

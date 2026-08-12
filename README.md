@@ -2,7 +2,7 @@
 
 # LunaMaxxing
 
-**Explicit, quality-first native orchestration for Luna Max.**
+**Explicit, quality-first Codex orchestration for Luna Max with bounded Luna xhigh subagents.**
 
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=for-the-badge)](https://developers.openai.com/codex/)
 [![Test](https://img.shields.io/github/actions/workflow/status/HakanBabus/LunaMaxxing/test.yml?branch=main&style=for-the-badge&label=tests)](https://github.com/HakanBabus/LunaMaxxing/actions/workflows/test.yml)
@@ -26,17 +26,17 @@ It is not a replacement model and it does not start separate processes. It is a 
 | Role | Preferred runtime | Responsibility |
 | --- | --- | --- |
 | Main | Luna Max (`gpt-5.6-luna`, `max`) | Own context, decisions, writing, verification, and final response |
-| Native subagent | Luna (`gpt-5.6-luna`, `xhigh`) when runtime-supported | Focused investigation, challenge, or review |
+| Native subagent | Verified Luna (`gpt-5.6-luna`, `xhigh`) only | Read-only investigation, challenge, or review |
 
-If native model/effort overrides cannot be verified, LunaMaxxing uses the runtime's available native delegation or stays DIRECT. It never creates a separate process to force xhigh.
+Delegation is allowed only when the native runtime can explicitly select, enforce, and reliably verify Luna xhigh for the child, preferably through returned runtime metadata. Requesting xhigh is not proof that it was used. **Unverified xhigh means DIRECT with no delegation.** LunaMaxxing never inherits a different child model or effort and never creates an external CLI/process fallback.
 
 ## Why use it?
 
 - **Explicit-only:** no surprise activation.
-- **Adaptive delegation:** 0–2 subagents normally, hard maximum 3.
-- **Main as writer:** subagents investigate and review by default.
+- **Adaptive delegation:** 0–2 children normally; hard maximum 3 total sessions and 3 concurrent children per run.
+- **Main-only writer:** every subagent is read-only; Main Luna Max owns all implementation and file changes.
 - **No recursive delegation:** only main may create subagents.
-- **Safe parallel writing:** allowed only with disjoint file ownership; overlapping files always have one writer.
+- **Bounded lifecycle:** reviewer, retry, and follow-up calls consume the same total budget; failed children are not automatically replaced.
 - **Evidence receipts:** every delegated result carries findings, evidence, confidence, risks, and a next action.
 - **Low ceremony:** small deterministic tasks remain direct.
 
@@ -71,10 +71,12 @@ Use the lunamaxxing skill to audit this repository and fix only evidence-backed 
 
 ```mermaid
 flowchart LR
-    A["Explicit LunaMaxxing request"] --> B{"Would isolated context add evidence or useful parallel progress?"}
+    A["Explicit LunaMaxxing request"] --> B{"Can Luna xhigh be selected and verified?"}
     B -->|No| C["DIRECT: main only"]
-    B -->|Yes, focused| D["DELEGATED: 1–2 native subagents"]
-    B -->|Independent workstreams| E["FANOUT: up to 3 native subagents"]
+    B -->|Yes| H{"Would isolated context add useful evidence?"}
+    H -->|No| C
+    H -->|Focused| D["DELEGATED: 1–2 verified read-only children"]
+    H -->|Independent workstreams| E["FANOUT: up to 3 verified read-only children"]
     D --> F["Main verifies and synthesizes"]
     E --> F
     C --> G["Main implements and verifies"]
@@ -87,20 +89,31 @@ No subagent. Best for typos, small fixes, obvious one-file refactors, and linear
 
 ### DELEGATED
 
-Usually 1–2 focused subagents. Best for uncertain bugs, cross-component reconnaissance, an independent alternative, or final diff review.
+Usually 1–2 focused, verified Luna xhigh subagents. Best for uncertain bugs, cross-component reconnaissance, an independent alternative, or final diff review.
 
 ### FANOUT
 
-At most 3 independent subagents. Reserved for repository-wide audits, complex regressions, or architecture decisions with separable evidence lanes. Difficulty alone is not enough.
+At most 3 independent, verified Luna xhigh subagents. Reserved for repository-wide audits, complex regressions, or architecture decisions with separable evidence lanes. Difficulty alone is not enough.
 
-Subagents compete on **information**, not duplicated implementation. Main verifies critical receipts before deciding.
+The limit is **3 total child sessions per run**, not merely 3 active at once. Reviewers, retries, and the single permitted bounded follow-up all count. Subagents are read-only and compete on **information**, not implementation. Main verifies critical receipts before deciding and remains the only writer.
+
+### Child lifecycle
+
+- `DONE`: main checks and uses the receipt.
+- `DONE_WITH_CONCERNS`: main evaluates the concerns before deciding.
+- `NEEDS_CONTEXT`: main may send at most one bounded follow-up; that follow-up consumes one unit of the same child-session budget.
+- `BLOCKED` or `FAILED`: no automatic replacement child is opened.
+
+A completed child is closed. Child failure does not grant a new child session.
 
 ## Repository structure
 
 ```text
 LunaMaxxing/
 ├─ .github/workflows/test.yml
-├─ evals/routing-scenarios.json
+├─ evals/
+│  ├─ evaluate-routing.ps1
+│  └─ routing-scenarios.json
 ├─ skills/lunamaxxing/
 │  ├─ SKILL.md
 │  ├─ agents/openai.yaml
@@ -114,7 +127,7 @@ LunaMaxxing/
 
 ## Validation
 
-The cross-platform suite checks explicit-only activation, route definitions, the 0–3 limit, recursive-delegation prevention, writer ownership, task packets, structured receipts, native child fallback, removal of the previous process-based architecture, README parity, and representative routing scenarios.
+The cross-platform suite checks explicit-only activation, strict xhigh verification, the 3-total/3-concurrent limits, bounded child lifecycle, main-only writing, task packets, structured receipts, repository-wide removal of the previous process architecture, README parity, and executable routing scenarios.
 
 ```powershell
 pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
@@ -123,7 +136,8 @@ pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
 ## Limits
 
 - Runtime support determines whether a child can actually be pinned to Luna xhigh.
-- The skill reports model/effort only when verified.
+- If Luna xhigh cannot be enforced and reliably verified, the route is DIRECT; requesting it is not verification.
+- No external CLI or process fallback is used.
 - Delegation improves process quality; it does not make Luna intrinsically equivalent to a stronger model.
 - Destructive actions, external writes, credentials, purchases, and production changes still require normal authorization.
 

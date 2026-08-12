@@ -2,7 +2,7 @@
 
 # LunaMaxxing
 
-**Luna Max için açıkça çağrılan, kalite odaklı native orchestration.**
+**Luna Max için sınırlı Luna xhigh subagent'larla explicit, kalite odaklı Codex orchestration.**
 
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=for-the-badge)](https://developers.openai.com/codex/)
 [![Test](https://img.shields.io/github/actions/workflow/status/HakanBabus/LunaMaxxing/test.yml?branch=main&style=for-the-badge&label=testler)](https://github.com/HakanBabus/LunaMaxxing/actions/workflows/test.yml)
@@ -26,17 +26,17 @@ Bu bir model değişimi değildir ve ayrı process'ler başlatmaz. Her görevi a
 | Rol | Tercih edilen runtime | Sorumluluk |
 | --- | --- | --- |
 | Main | Luna Max (`gpt-5.6-luna`, `max`) | Context, karar, yazma, doğrulama ve final cevap |
-| Native subagent | Runtime destekliyorsa Luna (`gpt-5.6-luna`, `xhigh`) | Odaklı araştırma, challenge veya review |
+| Native subagent | Yalnızca doğrulanmış Luna (`gpt-5.6-luna`, `xhigh`) | Read-only araştırma, challenge veya review |
 
-Native model/effort override doğrulanamıyorsa LunaMaxxing runtime'ın sunduğu native delegation'ı kullanır veya DIRECT kalır. xhigh zorlamak için ayrı process oluşturmaz.
+Delegation yalnızca native runtime child için Luna xhigh'ı açıkça seçebiliyor, enforce edebiliyor ve tercihen returned runtime metadata ile güvenilir biçimde doğrulayabiliyorsa kullanılabilir. Yalnızca xhigh istemek, kullanıldığının kanıtı değildir. **Doğrulanmamış xhigh → DIRECT; delegation yok.** Başka child model/effort inherit edilmez ve harici CLI/process fallback oluşturulmaz.
 
 ## Neden kullanılır?
 
 - **Explicit-only:** sürpriz biçimde devreye girmez.
-- **Uyarlanabilir delegation:** normalde 0–2, kesin üst sınır 3 subagent.
-- **Main varsayılan writer:** subagent'lar öncelikle araştırır ve review yapar.
+- **Uyarlanabilir delegation:** normalde 0–2 child; çalışma başına en fazla 3 total session ve 3 concurrent child.
+- **Main tek writer:** bütün subagent'lar read-only'dir; implementation ve dosya değişiklikleri Main Luna Max'a aittir.
 - **Recursive delegation yok:** yalnızca main subagent oluşturabilir.
-- **Güvenli paralel yazma:** yalnızca dosya sahipliği tamamen ayrılmışsa; kesişen dosyalarda tek writer vardır.
+- **Sınırlı lifecycle:** reviewer, retry ve follow-up çağrıları aynı total bütçeden düşer; başarısız child otomatik değiştirilmez.
 - **Kanıt receipt'leri:** her sonuç bulgu, kanıt, güven, risk ve sonraki eylem içerir.
 - **Az bürokrasi:** küçük ve açık görevler doğrudan çözülür.
 
@@ -71,10 +71,12 @@ Bu repository'yi incelemek ve yalnızca kanıtlı sorunları düzeltmek için lu
 
 ```mermaid
 flowchart LR
-    A["Açık LunaMaxxing isteği"] --> B{"İzole context yeni kanıt veya anlamlı paralel ilerleme sağlar mı?"}
+    A["Açık LunaMaxxing isteği"] --> B{"Luna xhigh seçilip doğrulanabiliyor mu?"}
     B -->|Hayır| C["DIRECT: yalnızca main"]
-    B -->|Odaklı fayda| D["DELEGATED: 1–2 native subagent"]
-    B -->|Bağımsız iş akışları| E["FANOUT: en fazla 3 native subagent"]
+    B -->|Evet| H{"İzole context faydalı kanıt sağlar mı?"}
+    H -->|Hayır| C
+    H -->|Odaklı| D["DELEGATED: 1–2 doğrulanmış read-only child"]
+    H -->|Bağımsız alanlar| E["FANOUT: en fazla 3 doğrulanmış read-only child"]
     D --> F["Main doğrular ve sentezler"]
     E --> F
     C --> G["Main uygular ve doğrular"]
@@ -87,20 +89,31 @@ Subagent yoktur. Typo, küçük fix, açık tek dosya refactor'ü ve doğrusal d
 
 ### DELEGATED
 
-Genellikle 1–2 odaklı subagent kullanır. Belirsiz bug, component'lar arası reconnaissance, bağımsız alternatif veya final diff review için uygundur.
+Genellikle 1–2 odaklı, doğrulanmış Luna xhigh subagent kullanır. Belirsiz bug, component'lar arası reconnaissance, bağımsız alternatif veya final diff review için uygundur.
 
 ### FANOUT
 
-En fazla 3 bağımsız subagent kullanır. Repository genelindeki audit, karmaşık regression veya ayrılabilir kanıt alanları olan mimari kararlar içindir. Görevin yalnızca zor olması yeterli değildir.
+En fazla 3 bağımsız, doğrulanmış Luna xhigh subagent kullanır. Repository genelindeki audit, karmaşık regression veya ayrılabilir kanıt alanları olan mimari kararlar içindir. Görevin yalnızca zor olması yeterli değildir.
 
-Subagent'lar tekrar eden implementation üzerinde değil, **bilgi üzerinde** yarışır. Main karar vermeden önce kritik receipt'leri doğrular.
+Sınır aynı anda açık child sayısı değil, çalışma boyunca **3 total child session**'dır. Reviewer, retry ve izin verilen tek bounded follow-up da buna dahildir. Subagent'lar read-only'dir ve implementation yerine **bilgi üzerinde** yarışır. Main kritik receipt'leri doğrular ve tek writer olarak kalır.
+
+### Child lifecycle
+
+- `DONE`: main receipt'i kontrol edip kullanır.
+- `DONE_WITH_CONCERNS`: main concern'leri değerlendirir.
+- `NEEDS_CONTEXT`: en fazla bir bounded follow-up verilebilir; bu follow-up aynı child-session bütçesinden bir birim düşer.
+- `BLOCKED` veya `FAILED`: otomatik replacement child açılmaz.
+
+Tamamlanan child kapalı kabul edilir. Child failure yeni child açma yetkisi vermez.
 
 ## Repository yapısı
 
 ```text
 LunaMaxxing/
 ├─ .github/workflows/test.yml
-├─ evals/routing-scenarios.json
+├─ evals/
+│  ├─ evaluate-routing.ps1
+│  └─ routing-scenarios.json
 ├─ skills/lunamaxxing/
 │  ├─ SKILL.md
 │  ├─ agents/openai.yaml
@@ -114,7 +127,7 @@ LunaMaxxing/
 
 ## Doğrulama
 
-Platformlar arası test; explicit-only davranışını, route tanımlarını, 0–3 sınırını, recursive delegation yasağını, writer sahipliğini, task packet ve structured receipt sözleşmelerini, native child fallback'ini, eski process tabanlı mimarinin kaldırılmasını, README uyumunu ve örnek route senaryolarını kontrol eder.
+Platformlar arası test; explicit-only davranışını, strict xhigh doğrulamasını, 3 total/3 concurrent sınırını, bounded child lifecycle'ını, main-only writer politikasını, task packet ve structured receipt sözleşmelerini, eski process mimarisinin repo genelinden kaldırılmasını, README uyumunu ve çalıştırılabilir routing senaryolarını kontrol eder.
 
 ```powershell
 pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
@@ -123,7 +136,8 @@ pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
 ## Sınırlar
 
 - Child'ın gerçekten Luna xhigh olarak sabitlenebilmesi runtime desteğine bağlıdır.
-- Skill yalnızca doğrulayabildiği model/effort bilgisini raporlar.
+- Luna xhigh enforce edilip güvenilir biçimde doğrulanamıyorsa route DIRECT olur; yalnızca istemek doğrulama değildir.
+- Harici CLI veya process fallback kullanılmaz.
 - Delegation süreci iyileştirir; Luna'yı yapısal olarak daha güçlü bir modele eşitlemez.
 - Yıkıcı işlemler, harici yazmalar, kimlik bilgileri, satın almalar ve production değişiklikleri normal yetki sınırlarına tabidir.
 

@@ -25,3 +25,7 @@ jobs:
       - name: Run LunaMaxxing tests
         shell: pwsh
         run: ./tests/test-lunamaxxing.ps1
+
+      - name: Run routing evals
+        shell: pwsh
+        run: ./evals/evaluate-routing.ps1
