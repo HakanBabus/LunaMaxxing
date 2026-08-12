@@ -26,8 +26,9 @@ $promptPath = [System.IO.Path]::GetTempFileName()
 $fakeBinDirectory = Join-Path ([System.IO.Path]::GetTempPath()) ('lunamaxxing-fake-bin-' + [guid]::NewGuid().ToString('N'))
 $capturePath = Join-Path $fakeBinDirectory 'captured-prompt.bin'
 $fakeCodexPath = Join-Path $fakeBinDirectory 'codex.cmd'
-$outputDirectoryName = 'lunamaxxing-test-output'
+$outputDirectoryName = 'lunamaxxing-test-output-' + [guid]::NewGuid().ToString('N')
 $outputRelativePath = Join-Path $outputDirectoryName 'answer.md'
+$outputDirectoryPath = Join-Path $repoRoot $outputDirectoryName
 $marker = 'LUNAMAXXING_WORKER_ACTIVE=true'
 $unicodeSample = [string]::Concat(
     [char]0x011f, [char]0x015f, [char]0x0131, [char]0x0130,
@@ -76,7 +77,7 @@ try {
     try {
         $env:Path = "$fakeBinDirectory;$originalPath"
         $env:LUNAMAXXING_CAPTURE_PATH = $capturePath
-        & $launcher -Prompt $prompt -Workdir $repoRoot -Sandbox read-only
+        & $launcher -Prompt $prompt -Workdir $repoRoot -Sandbox read-only -OutputLastMessage $outputRelativePath
     }
     finally {
         $env:Path = $originalPath
@@ -84,6 +85,7 @@ try {
     }
 
     Assert-True (Test-Path -LiteralPath $capturePath -PathType Leaf) 'launcher must write a prompt to native stdin'
+    Assert-True (Test-Path -LiteralPath $outputDirectoryPath -PathType Container) 'real worker launch must create a missing output directory'
     $capturedPrompt = [System.Text.Encoding]::UTF8.GetString([System.IO.File]::ReadAllBytes($capturePath))
     Assert-True ($capturedPrompt -match [regex]::Escape($unicodeSample)) 'native worker stdin must preserve contract Unicode'
     Assert-True ($capturedPrompt -match '# User Task Packet') 'native worker stdin must contain the task boundary'
@@ -104,5 +106,8 @@ finally {
     }
     if (Test-Path -LiteralPath $fakeBinDirectory) {
         Remove-Item -LiteralPath $fakeBinDirectory -Recurse -Force
+    }
+    if (Test-Path -LiteralPath $outputDirectoryPath) {
+        Remove-Item -LiteralPath $outputDirectoryPath -Recurse -Force
     }
 }
