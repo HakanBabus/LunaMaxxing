@@ -80,15 +80,15 @@ try {
     Assert-True ($outputRun.OutputLastMessage -eq (Join-Path $repoRoot $outputRelativePath)) 'relative output path must resolve from workdir'
     Assert-True (-not (Test-Path -LiteralPath (Join-Path $repoRoot $outputDirectoryName))) 'dry-run must not create the output directory'
 
-    $originalPath = $env:Path
+    $originalPath = [System.Environment]::GetEnvironmentVariable('PATH', 'Process')
     $originalCapturePath = $env:LUNAMAXXING_CAPTURE_PATH
     try {
-        $env:Path = "$fakeBinDirectory$([System.IO.Path]::PathSeparator)$originalPath"
+        [System.Environment]::SetEnvironmentVariable('PATH', "$fakeBinDirectory$([System.IO.Path]::PathSeparator)$originalPath", 'Process')
         $env:LUNAMAXXING_CAPTURE_PATH = $capturePath
         & $launcher -Prompt $prompt -Workdir $repoRoot -Sandbox read-only -OutputLastMessage $outputRelativePath
     }
     finally {
-        $env:Path = $originalPath
+        [System.Environment]::SetEnvironmentVariable('PATH', $originalPath, 'Process')
         $env:LUNAMAXXING_CAPTURE_PATH = $originalCapturePath
     }
 
