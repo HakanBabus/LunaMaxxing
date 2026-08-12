@@ -1,6 +1,6 @@
 ---
 name: lunamaxxing
-description: Run difficult, ambiguous, creative, research-heavy, product, UI/UX, coding, debugging, planning, or implementation tasks through an adaptive Luna Max-style workflow with explicit quality gates. Use only when the user explicitly invokes $lunamaxxing, asks for LunaMaxxing or Luna Max, or directly requests this quality-first workflow. Continue in the current session by default; dispatch exactly one pinned Luna Max CLI worker only when the user explicitly requests a new worker, isolated session, or CLI dispatch.
+description: Run difficult, ambiguous, creative, research-heavy, product, UI/UX, coding, debugging, planning, or implementation tasks through an adaptive Luna Max-style workflow with explicit quality gates. Use only when the user explicitly invokes $lunamaxxing or directly instructs Codex to use the lunamaxxing skill. Do not invoke merely because a request mentions Luna, Luna Max, quality, deep analysis, planning, or verification. Continue in the current session by default; dispatch exactly one pinned Luna Max CLI worker only when the user explicitly requests a new worker, isolated session, or CLI dispatch.
 ---
 
 # LunaMaxxing
