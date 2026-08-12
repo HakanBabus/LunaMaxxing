@@ -8,8 +8,8 @@ permissions:
   contents: read
 
 jobs:
-  launcher-contract:
-    name: Launcher and contract (${{ matrix.os }})
+  native-orchestration:
+    name: Native orchestration (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false

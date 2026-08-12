@@ -19,7 +19,7 @@ Read `references/delegation-playbook.md` before delegating. For DIRECT work, fol
 - Subagents investigate and review by default. Main is the default writer.
 - Permit parallel implementation only for explicitly disjoint file ownership. At any time, overlapping files have exactly one writer.
 - Prefer `gpt-5.6-luna` with `xhigh` reasoning for child agents only when the native runtime reliably supports that exact override. Otherwise use the native capacity available or skip delegation, and report the limitation without claiming an unverified model.
-- Never create a CLI fallback, terminal worker, or separate process to obtain a preferred child model.
+- Never create a separate process to obtain a preferred child model.
 - Preserve repository instructions, user work, authorization boundaries, and evidence integrity.
 
 ## Select one route

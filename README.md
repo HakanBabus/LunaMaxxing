@@ -16,7 +16,7 @@
 
 LunaMaxxing keeps the **Luna Max main session** in control and selectively delegates bounded investigation, review, or independent reasoning to native **Luna xhigh subagents** when delegation can materially improve the answer.
 
-It is not a replacement model and it does not start separate CLI processes. It is a compact orchestration policy for getting more value from evidence, independent checks, and deliberate synthesis without turning every task into a large pipeline.
+It is not a replacement model and it does not start separate processes. It is a compact orchestration policy for getting more value from evidence, independent checks, and deliberate synthesis without turning every task into a large pipeline.
 
 > [!IMPORTANT]
 > LunaMaxxing is **explicit-only**. It runs only when you invoke `$lunamaxxing` or directly ask Codex to use the lunamaxxing skill. Mentions of Luna Max, quality, deep analysis, planning, debugging, or verification do not activate it.
@@ -114,7 +114,7 @@ LunaMaxxing/
 
 ## Validation
 
-The cross-platform suite checks explicit-only activation, route definitions, the 0–3 limit, recursive-delegation prevention, writer ownership, task packets, structured receipts, native child fallback, removal of the previous external-worker architecture, README parity, and representative routing scenarios.
+The cross-platform suite checks explicit-only activation, route definitions, the 0–3 limit, recursive-delegation prevention, writer ownership, task packets, structured receipts, native child fallback, removal of the previous process-based architecture, README parity, and representative routing scenarios.
 
 ```powershell
 pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1

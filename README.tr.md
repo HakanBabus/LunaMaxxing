@@ -16,7 +16,7 @@
 
 LunaMaxxing, **Luna Max ana oturumunu** görevin sahibi olarak tutar; delegation gerçekten fayda sağlayacaksa sınırlı araştırma, bağımsız doğrulama veya review işlerini native **Luna xhigh subagent'lara** verir.
 
-Bu bir model değişimi değildir ve ayrı CLI process'leri başlatmaz. Her görevi ağır bir pipeline'a çevirmeden kanıt, bağımsız kontrol ve bilinçli sentezden daha fazla fayda almayı sağlayan sade bir orchestration politikasıdır.
+Bu bir model değişimi değildir ve ayrı process'ler başlatmaz. Her görevi ağır bir pipeline'a çevirmeden kanıt, bağımsız kontrol ve bilinçli sentezden daha fazla fayda almayı sağlayan sade bir orchestration politikasıdır.
 
 > [!IMPORTANT]
 > LunaMaxxing **yalnızca açıkça çağrılırsa** çalışır. `$lunamaxxing` kullanmalı veya Codex'e doğrudan lunamaxxing skillini kullanmasını söylemelisin. Luna Max, kalite, derin analiz, planlama, debugging veya doğrulama kelimeleri tek başına skill'i etkinleştirmez.
@@ -28,7 +28,7 @@ Bu bir model değişimi değildir ve ayrı CLI process'leri başlatmaz. Her gör
 | Main | Luna Max (`gpt-5.6-luna`, `max`) | Context, karar, yazma, doğrulama ve final cevap |
 | Native subagent | Runtime destekliyorsa Luna (`gpt-5.6-luna`, `xhigh`) | Odaklı araştırma, challenge veya review |
 
-Native model/effort override doğrulanamıyorsa LunaMaxxing runtime'ın sunduğu native delegation'ı kullanır veya DIRECT kalır. xhigh zorlamak için terminal process'i ya da harici worker oluşturmaz.
+Native model/effort override doğrulanamıyorsa LunaMaxxing runtime'ın sunduğu native delegation'ı kullanır veya DIRECT kalır. xhigh zorlamak için ayrı process oluşturmaz.
 
 ## Neden kullanılır?
 
@@ -114,7 +114,7 @@ LunaMaxxing/
 
 ## Doğrulama
 
-Platformlar arası test; explicit-only davranışını, route tanımlarını, 0–3 sınırını, recursive delegation yasağını, writer sahipliğini, task packet ve structured receipt sözleşmelerini, native child fallback'ini, eski harici-worker mimarisinin kaldırılmasını, README uyumunu ve örnek route senaryolarını kontrol eder.
+Platformlar arası test; explicit-only davranışını, route tanımlarını, 0–3 sınırını, recursive delegation yasağını, writer sahipliğini, task packet ve structured receipt sözleşmelerini, native child fallback'ini, eski process tabanlı mimarinin kaldırılmasını, README uyumunu ve örnek route senaryolarını kontrol eder.
 
 ```powershell
 pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1

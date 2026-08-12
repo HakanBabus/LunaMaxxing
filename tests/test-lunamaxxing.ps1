@@ -15,8 +15,9 @@ $metadata = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path $skillRoot 'ag
 $playbook = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path $skillRoot 'references') 'delegation-playbook.md')
 $readmeEn = Get-Content -Raw -Encoding UTF8 (Join-Path $repoRoot 'README.md')
 $readmeTr = Get-Content -Raw -Encoding UTF8 (Join-Path $repoRoot 'README.tr.md')
+$workflow = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path (Join-Path $repoRoot '.github') 'workflows') 'test.yml')
 $scenarios = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path $repoRoot 'evals') 'routing-scenarios.json') | ConvertFrom-Json
-$allProjectText = $skill + $metadata + $playbook + $readmeEn + $readmeTr
+$allProjectText = $skill + $metadata + $playbook + $readmeEn + $readmeTr + $workflow
 
 Assert-True ($metadata -match 'allow_implicit_invocation:\s*false') 'implicit invocation must stay disabled'
 Assert-True ($skill -match 'explicitly invokes \$lunamaxxing') 'explicit invocation trigger must be documented'
