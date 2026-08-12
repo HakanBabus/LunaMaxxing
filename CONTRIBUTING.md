@@ -15,7 +15,7 @@ Small, focused pull requests are easiest to review.
 
 ## Tests
 
-Run the deterministic launcher and contract suite from the repository root:
+Run the deterministic architecture and routing suite from the repository root:
 
 ```powershell
 pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
@@ -27,4 +27,4 @@ On Windows without PowerShell 7, use Windows PowerShell:
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\test-lunamaxxing.ps1
 ```
 
-The same suite runs on Windows and Ubuntu for every push and pull request.
+The same suite runs on Windows and Ubuntu for every push and pull request. Keep core routing limits in `SKILL.md`; documentation and tests should assert those rules without inventing alternatives.

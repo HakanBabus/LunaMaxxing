@@ -1,0 +1,28 @@
+{
+  "scenarios": [
+    {
+      "id": "tiny_typo",
+      "prompt": "Fix a typo in one known file.",
+      "expected_route": "DIRECT",
+      "expected_max_subagents": 0,
+      "writer_policy": "main_default",
+      "delegation_reason": "No isolated investigation would add useful evidence."
+    },
+    {
+      "id": "unclear_state_bug",
+      "prompt": "Investigate intermittent state loss across navigation and async saves.",
+      "expected_route": "DELEGATED",
+      "expected_max_subagents": 2,
+      "writer_policy": "main_default",
+      "delegation_reason": "Independent tracing and falsification can reduce root-cause uncertainty."
+    },
+    {
+      "id": "repository_wide_audit",
+      "prompt": "Audit runtime flow, architecture boundaries, and regression coverage across the repository.",
+      "expected_route": "FANOUT",
+      "expected_max_subagents": 3,
+      "writer_policy": "main_default",
+      "delegation_reason": "Three non-overlapping information lanes provide meaningful parallel progress."
+    }
+  ]
+}

@@ -2,57 +2,54 @@
 
 # LunaMaxxing
 
-**Quality-first Codex skills built through real use, testing, and iteration.**
+**Explicit, quality-first native orchestration for Luna Max.**
 
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=for-the-badge)](https://developers.openai.com/codex/)
-[![Status](https://img.shields.io/badge/status-experimental-f59e0b?style=for-the-badge)](#project-status)
+[![Test](https://img.shields.io/github/actions/workflow/status/HakanBabus/LunaMaxxing/test.yml?branch=main&style=for-the-badge&label=tests)](https://github.com/HakanBabus/LunaMaxxing/actions/workflows/test.yml)
 [![License: MIT](https://img.shields.io/badge/license-MIT-22c55e?style=for-the-badge)](LICENSE)
 
-[English](README.md) · [Türkçe](README.tr.md) · [Install](#installation) · [How it works](#how-lunamaxxing-works)
+[English](README.md) · [Türkçe](README.tr.md) · [Install](#installation) · [Routes](#adaptive-routes)
 
 </div>
 
 ---
 
-**LunaMaxxing** is an adaptive Codex workflow designed to help Luna Max produce stronger results through deliberate framing, evidence gathering, alternative generation, stepwise execution, and explicit verification.
+LunaMaxxing keeps the **Luna Max main session** in control and selectively delegates bounded investigation, review, or independent reasoning to native **Luna xhigh subagents** when delegation can materially improve the answer.
+
+It is not a replacement model and it does not start separate CLI processes. It is a compact orchestration policy for getting more value from evidence, independent checks, and deliberate synthesis without turning every task into a large pipeline.
 
 > [!IMPORTANT]
-> LunaMaxxing does not claim that Luna becomes intrinsically equivalent to a stronger model. It improves the process around the model so that difficult tasks are less likely to end with a shallow first answer.
+> LunaMaxxing is **explicit-only**. It runs only when you invoke `$lunamaxxing` or directly ask Codex to use the lunamaxxing skill. Mentions of Luna Max, quality, deep analysis, planning, debugging, or verification do not activate it.
 
-## Available skills
+## Core model
 
-| Skill | Purpose | Status |
+| Role | Preferred runtime | Responsibility |
 | --- | --- | --- |
-| [`lunamaxxing`](skills/lunamaxxing) | Quality-first analysis, planning, implementation, and verification with adaptive depth | Experimental |
+| Main | Luna Max (`gpt-5.6-luna`, `max`) | Own context, decisions, writing, verification, and final response |
+| Native subagent | Luna (`gpt-5.6-luna`, `xhigh`) when runtime-supported | Focused investigation, challenge, or review |
 
-## Why LunaMaxxing?
+If native model/effort overrides cannot be verified, LunaMaxxing uses the runtime's available native delegation or stays DIRECT. It never creates a separate process to force xhigh.
 
-Cheap reasoning is useful only when the extra work is structured. LunaMaxxing adds guardrails that make longer runs purposeful:
+## Why use it?
 
-- **Explicit invocation:** it runs only when the user asks for it.
-- **Current-session first:** it preserves conversation context by default.
-- **Controlled worker dispatch:** a pinned Luna Max CLI worker is started only when explicitly requested.
-- **Config-preserving dispatch:** separate workers inherit user Codex configuration unless isolation is explicitly selected.
-- **Adaptive depth:** a simple `0–5` score chooses Light, Standard, or Deep reasoning.
-- **Bounded iteration:** correction rounds are capped to prevent endless polishing.
-- **Authority boundaries:** analysis does not silently become implementation or an external action.
-- **Evidence-backed confidence:** more prose cannot raise confidence; stronger evidence can.
-- **Task-specific modules:** product, research, debugging, creative work, and visual QA load only when relevant.
+- **Explicit-only:** no surprise activation.
+- **Adaptive delegation:** 0–2 subagents normally, hard maximum 3.
+- **Main as writer:** subagents investigate and review by default.
+- **No recursive delegation:** only main may create subagents.
+- **Safe parallel writing:** allowed only with disjoint file ownership; overlapping files always have one writer.
+- **Evidence receipts:** every delegated result carries findings, evidence, confidence, risks, and a next action.
+- **Low ceremony:** small deterministic tasks remain direct.
 
 ## Installation
 
-### Option A — Ask Codex to install it
-
-Use the built-in skill installer:
+Ask Codex to install the skill from this repository:
 
 ```text
 Use $skill-installer to install lunamaxxing from
 https://github.com/HakanBabus/LunaMaxxing/tree/main/skills/lunamaxxing
 ```
 
-The installed skill becomes available on the next turn.
-
-### Option B — Install with the bundled installer script
+Or install manually:
 
 ```powershell
 python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" `
@@ -60,95 +57,54 @@ python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-s
   --path skills/lunamaxxing
 ```
 
-The installer intentionally stops if a skill with the same name already exists.
-
-<details>
-<summary><strong>Manual installation</strong></summary>
-
-Clone the repository, then copy the skill folder into your Codex skills directory:
-
-```powershell
-git clone https://github.com/HakanBabus/LunaMaxxing.git
-Copy-Item -Recurse `
-  .\LunaMaxxing\skills\lunamaxxing `
-  "$env:USERPROFILE\.codex\skills\lunamaxxing"
-```
-
-Start a new Codex turn after installation.
-
-</details>
-
 ## Usage
 
-Invoke the skill explicitly:
-
 ```text
-Use $lunamaxxing to analyze this product problem, choose the strongest direction,
-implement it step by step, and verify the result.
-```
-
-The skill stays in the current session unless you explicitly request a separate worker:
-
-```text
-Use $lunamaxxing in a separate pinned Luna Max CLI worker for this task.
-```
-
-Separate workers are intentionally **one-shot and non-resumable**. Each explicit request authorizes one ephemeral worker. They inherit your normal Codex configuration, including configured MCP servers and preferences; request isolated config explicitly when that is the desired constraint.
-
-`-OutputLastMessage` accepts an absolute path or a path relative to `-Workdir`; the launcher creates a missing output directory only for a real worker run, never during `-DryRun`.
-
-<details>
-<summary><strong>More example prompts</strong></summary>
-
-```text
-Use $lunamaxxing to diagnose this regression before changing any code.
+Use $lunamaxxing to investigate this intermittent state-loss bug, implement the verified fix, and test regressions.
 ```
 
 ```text
-Use $lunamaxxing to compare three product directions, select one, implement it,
-and validate the user-visible result.
+Use the lunamaxxing skill to audit this repository and fix only evidence-backed issues.
 ```
 
-```text
-Use $lunamaxxing to research this decision, separate facts from inference,
-and produce an implementation-ready plan.
+## Adaptive routes
+
+```mermaid
+flowchart LR
+    A["Explicit LunaMaxxing request"] --> B{"Would isolated context add evidence or useful parallel progress?"}
+    B -->|No| C["DIRECT: main only"]
+    B -->|Yes, focused| D["DELEGATED: 1–2 native subagents"]
+    B -->|Independent workstreams| E["FANOUT: up to 3 native subagents"]
+    D --> F["Main verifies and synthesizes"]
+    E --> F
+    C --> G["Main implements and verifies"]
+    F --> G
 ```
 
-</details>
+### DIRECT
 
-## How LunaMaxxing works
+No subagent. Best for typos, small fixes, obvious one-file refactors, and linear low-risk work.
 
-1. **Respect authority** — determine whether the request permits analysis, local changes, or external actions.
-2. **Select the route** — continue in the current session by default; dispatch only when explicitly requested.
-3. **Score the task** — use five simple uncertainty and risk signals to choose the depth.
-4. **Frame success** — define the outcome, acceptance criteria, constraints, preserved behavior, and open risks.
-5. **Establish evidence** — inspect the real system and test competing explanations.
-6. **Explore and decide** — generate materially different directions when the task warrants it.
-7. **Execute step by step** — make focused changes and inspect each result.
-8. **Verify independently** — test purpose, behavior, artifacts, regressions, and the most damaging plausible failure.
-9. **Report confidence** — tie Low, Medium, or High confidence to actual validation evidence.
+### DELEGATED
 
-### Adaptive depth
+Usually 1–2 focused subagents. Best for uncertain bugs, cross-component reconnaissance, an independent alternative, or final diff review.
 
-| Score | Budget | Default correction limit | Typical use |
-| ---: | --- | ---: | --- |
-| `0–1` | Light | 1 | Localized, deterministic, low-risk work |
-| `2–3` | Standard | 2 | Non-trivial work with uncertainty or alternatives |
-| `4–5` | Deep | 3 | Ambiguous, cross-cutting, high-risk, or heavily state-dependent work |
+### FANOUT
 
-The limits are allowances, not targets. The workflow stops early when evidence already supports acceptance.
+At most 3 independent subagents. Reserved for repository-wide audits, complex regressions, or architecture decisions with separable evidence lanes. Difficulty alone is not enough.
+
+Subagents compete on **information**, not duplicated implementation. Main verifies critical receipts before deciding.
 
 ## Repository structure
 
 ```text
 LunaMaxxing/
 ├─ .github/workflows/test.yml
-├─ skills/
-│  └─ lunamaxxing/
-│     ├─ SKILL.md
-│     ├─ agents/openai.yaml
-│     ├─ references/
-│     └─ scripts/
+├─ evals/routing-scenarios.json
+├─ skills/lunamaxxing/
+│  ├─ SKILL.md
+│  ├─ agents/openai.yaml
+│  └─ references/delegation-playbook.md
 ├─ tests/test-lunamaxxing.ps1
 ├─ README.md
 ├─ README.tr.md
@@ -156,23 +112,24 @@ LunaMaxxing/
 └─ LICENSE
 ```
 
-## Safety and limitations
+## Validation
 
-- The skill is not authority for destructive actions, purchases, credential use, production changes, or scope expansion.
-- Model identity is reported only when runtime metadata verifies it or the launcher pins it.
-- A separate worker is never created merely to gain more thinking time.
-- Separate workers are ephemeral one-shot runs and cannot be resumed after exit.
-- User Codex configuration is inherited by default; isolated config is opt-in.
-- Some CLI flags and model identifiers may depend on the user's Codex version and account availability.
-- The project is experimental; inspect the workflow before using it on high-impact work.
+The cross-platform suite checks explicit-only activation, route definitions, the 0–3 limit, recursive-delegation prevention, writer ownership, task packets, structured receipts, native child fallback, removal of the previous external-worker architecture, README parity, and representative routing scenarios.
 
-## Project status
+```powershell
+pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
+```
 
-The current version is ready for practical testing and public iteration. Planned additions include reproducible example tasks, Luna Max versus LunaMaxxing comparisons, evaluation tables, and visual result graphs.
+## Limits
+
+- Runtime support determines whether a child can actually be pinned to Luna xhigh.
+- The skill reports model/effort only when verified.
+- Delegation improves process quality; it does not make Luna intrinsically equivalent to a stronger model.
+- Destructive actions, external writes, credentials, purchases, and production changes still require normal authorization.
 
 ## Contributing
 
-Issues and focused pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
+Focused issues and pull requests are welcome. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## License
 

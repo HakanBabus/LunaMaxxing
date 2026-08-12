@@ -2,57 +2,54 @@
 
 # LunaMaxxing
 
-**Gerçek kullanım, test ve tekrarlarla geliştirilen kalite odaklı Codex skill'leri.**
+**Luna Max için açıkça çağrılan, kalite odaklı native orchestration.**
 
 [![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=for-the-badge)](https://developers.openai.com/codex/)
-[![Durum](https://img.shields.io/badge/durum-deneysel-f59e0b?style=for-the-badge)](#proje-durumu)
+[![Test](https://img.shields.io/github/actions/workflow/status/HakanBabus/LunaMaxxing/test.yml?branch=main&style=for-the-badge&label=testler)](https://github.com/HakanBabus/LunaMaxxing/actions/workflows/test.yml)
 [![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-22c55e?style=for-the-badge)](LICENSE)
 
-[English](README.md) · [Türkçe](README.tr.md) · [Kurulum](#kurulum) · [Nasıl çalışır?](#lunamaxxing-nasıl-çalışır)
+[English](README.md) · [Türkçe](README.tr.md) · [Kurulum](#kurulum) · [Rotalar](#uyarlanabilir-rotalar)
 
 </div>
 
 ---
 
-**LunaMaxxing**, Luna Max'in görevleri daha güçlü bir süreçle çözmesine yardımcı olmak için tasarlanmış uyarlanabilir bir Codex analiz, planlama, uygulama ve doğrulama iş akışıdır.
+LunaMaxxing, **Luna Max ana oturumunu** görevin sahibi olarak tutar; delegation gerçekten fayda sağlayacaksa sınırlı araştırma, bağımsız doğrulama veya review işlerini native **Luna xhigh subagent'lara** verir.
+
+Bu bir model değişimi değildir ve ayrı CLI process'leri başlatmaz. Her görevi ağır bir pipeline'a çevirmeden kanıt, bağımsız kontrol ve bilinçli sentezden daha fazla fayda almayı sağlayan sade bir orchestration politikasıdır.
 
 > [!IMPORTANT]
-> LunaMaxxing, Luna'nın yapısal olarak daha güçlü bir modelle eşit hâle geldiğini iddia etmez. Modelin çevresindeki süreci güçlendirerek zor görevlerin yüzeysel bir ilk cevapla bitme olasılığını azaltır.
+> LunaMaxxing **yalnızca açıkça çağrılırsa** çalışır. `$lunamaxxing` kullanmalı veya Codex'e doğrudan lunamaxxing skillini kullanmasını söylemelisin. Luna Max, kalite, derin analiz, planlama, debugging veya doğrulama kelimeleri tek başına skill'i etkinleştirmez.
 
-## Mevcut skill'ler
+## Temel model
 
-| Skill | Amaç | Durum |
+| Rol | Tercih edilen runtime | Sorumluluk |
 | --- | --- | --- |
-| [`lunamaxxing`](skills/lunamaxxing) | Uyarlanabilir derinlikle kalite odaklı analiz, planlama, uygulama ve doğrulama | Deneysel |
+| Main | Luna Max (`gpt-5.6-luna`, `max`) | Context, karar, yazma, doğrulama ve final cevap |
+| Native subagent | Runtime destekliyorsa Luna (`gpt-5.6-luna`, `xhigh`) | Odaklı araştırma, challenge veya review |
 
-## Neden LunaMaxxing?
+Native model/effort override doğrulanamıyorsa LunaMaxxing runtime'ın sunduğu native delegation'ı kullanır veya DIRECT kalır. xhigh zorlamak için terminal process'i ya da harici worker oluşturmaz.
 
-Ucuz akıl yürütme, ancak ek çalışma düzenli olduğunda değerlidir. LunaMaxxing uzun çalışmaları amaçlı hâle getiren sınırlar ekler:
+## Neden kullanılır?
 
-- **Açık çağrı:** yalnızca kullanıcı istediğinde çalışır.
-- **Önce mevcut oturum:** konuşma bağlamını varsayılan olarak korur.
-- **Kontrollü worker:** sabitlenmiş Luna Max CLI worker yalnızca açıkça istenirse başlatılır.
-- **Config'i koruyan worker:** ayrı worker, izolasyon açıkça seçilmedikçe kullanıcının Codex ayarlarını devralır.
-- **Uyarlanabilir derinlik:** basit `0–5` puanı Light, Standard veya Deep seviyesini seçer.
-- **Sınırlı tekrar:** sonsuz cilalamayı önlemek için düzeltme turları sınırlandırılır.
-- **Yetki sınırları:** analiz görevi sessizce uygulamaya veya harici işleme dönüşmez.
-- **Kanıta bağlı güven:** uzun metin güveni yükseltmez; güçlü kanıt yükseltebilir.
-- **Göreve özel modüller:** ürün, araştırma, hata ayıklama, yaratıcı çalışma ve görsel QA yalnızca gerektiğinde yüklenir.
+- **Explicit-only:** sürpriz biçimde devreye girmez.
+- **Uyarlanabilir delegation:** normalde 0–2, kesin üst sınır 3 subagent.
+- **Main varsayılan writer:** subagent'lar öncelikle araştırır ve review yapar.
+- **Recursive delegation yok:** yalnızca main subagent oluşturabilir.
+- **Güvenli paralel yazma:** yalnızca dosya sahipliği tamamen ayrılmışsa; kesişen dosyalarda tek writer vardır.
+- **Kanıt receipt'leri:** her sonuç bulgu, kanıt, güven, risk ve sonraki eylem içerir.
+- **Az bürokrasi:** küçük ve açık görevler doğrudan çözülür.
 
 ## Kurulum
 
-### Seçenek A — Codex'ten yüklemesini isteyin
-
-Yerleşik skill yükleyiciyi kullanın:
+Codex'ten bu repository'den yüklemesini iste:
 
 ```text
 Use $skill-installer to install lunamaxxing from
 https://github.com/HakanBabus/LunaMaxxing/tree/main/skills/lunamaxxing
 ```
 
-Yüklenen skill bir sonraki Codex turunda kullanılabilir olur.
-
-### Seçenek B — Yerleşik yükleyici script ile kurun
+Veya elle yükle:
 
 ```powershell
 python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" `
@@ -60,95 +57,54 @@ python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-s
   --path skills/lunamaxxing
 ```
 
-Aynı isimde bir skill zaten varsa yükleyici güvenli biçimde durur.
-
-<details>
-<summary><strong>Manuel kurulum</strong></summary>
-
-Depoyu klonlayın ve skill klasörünü Codex skill dizininize kopyalayın:
-
-```powershell
-git clone https://github.com/HakanBabus/LunaMaxxing.git
-Copy-Item -Recurse `
-  .\LunaMaxxing\skills\lunamaxxing `
-  "$env:USERPROFILE\.codex\skills\lunamaxxing"
-```
-
-Kurulumdan sonra yeni bir Codex turu başlatın.
-
-</details>
-
 ## Kullanım
 
-Skill'i açıkça çağırın:
-
 ```text
-Use $lunamaxxing to analyze this product problem, choose the strongest direction,
-implement it step by step, and verify the result.
-```
-
-Farklı bir worker açıkça istenmediği sürece skill mevcut oturumda kalır:
-
-```text
-Use $lunamaxxing in a separate pinned Luna Max CLI worker for this task.
-```
-
-Ayrı worker'lar bilinçli olarak **tek seferliktir ve resume edilemez**. Her açık istek yalnızca bir ephemeral worker'a yetki verir. Normal Codex config'i, tanımlı MCP sunucuları ve tercihler varsayılan olarak devralınır; config izolasyonu gerekiyorsa ayrıca açıkça istenmelidir.
-
-`-OutputLastMessage` mutlak bir yolu veya `-Workdir` göreli bir yolu kabul eder. Launcher, eksik çıktı klasörünü yalnızca gerçek worker çalışırken oluşturur; `-DryRun` hiçbir şey yazmaz.
-
-<details>
-<summary><strong>Daha fazla örnek prompt</strong></summary>
-
-```text
-Use $lunamaxxing to diagnose this regression before changing any code.
+Use $lunamaxxing to investigate this intermittent state-loss bug, implement the verified fix, and test regressions.
 ```
 
 ```text
-Use $lunamaxxing to compare three product directions, select one, implement it,
-and validate the user-visible result.
+Bu repository'yi incelemek ve yalnızca kanıtlı sorunları düzeltmek için lunamaxxing skillini kullan.
 ```
 
-```text
-Use $lunamaxxing to research this decision, separate facts from inference,
-and produce an implementation-ready plan.
+## Uyarlanabilir rotalar
+
+```mermaid
+flowchart LR
+    A["Açık LunaMaxxing isteği"] --> B{"İzole context yeni kanıt veya anlamlı paralel ilerleme sağlar mı?"}
+    B -->|Hayır| C["DIRECT: yalnızca main"]
+    B -->|Odaklı fayda| D["DELEGATED: 1–2 native subagent"]
+    B -->|Bağımsız iş akışları| E["FANOUT: en fazla 3 native subagent"]
+    D --> F["Main doğrular ve sentezler"]
+    E --> F
+    C --> G["Main uygular ve doğrular"]
+    F --> G
 ```
 
-</details>
+### DIRECT
 
-## LunaMaxxing nasıl çalışır?
+Subagent yoktur. Typo, küçük fix, açık tek dosya refactor'ü ve doğrusal düşük riskli işler için uygundur.
 
-1. **Yetkiyi korur** — isteğin yalnızca analiz, yerel değişiklik veya harici işlem yetkilerinden hangisini verdiğini belirler.
-2. **Rotayı seçer** — varsayılan olarak mevcut oturumda devam eder; yalnızca açıkça istenirse worker başlatır.
-3. **Görevi puanlar** — beş basit belirsizlik ve risk sinyaliyle derinliği seçer.
-4. **Başarıyı tanımlar** — sonuç, kabul kriterleri, kısıtlar, korunacak davranışlar ve riskleri yazar.
-5. **Kanıt toplar** — gerçek sistemi inceler ve alternatif açıklamaları sınar.
-6. **Seçenek üretir ve karar verir** — görev gerektiriyorsa birbirinden gerçekten farklı yönler oluşturur.
-7. **Adım adım uygular** — odaklı değişiklikler yapar ve her sonucu inceler.
-8. **Bağımsız doğrular** — amaç, davranış, çıktı, regresyon ve en zararlı olası hatayı test eder.
-9. **Güveni raporlar** — Low, Medium veya High seviyesini gerçek doğrulama kanıtlarına bağlar.
+### DELEGATED
 
-### Uyarlanabilir derinlik
+Genellikle 1–2 odaklı subagent kullanır. Belirsiz bug, component'lar arası reconnaissance, bağımsız alternatif veya final diff review için uygundur.
 
-| Puan | Seviye | Varsayılan düzeltme sınırı | Tipik kullanım |
-| ---: | --- | ---: | --- |
-| `0–1` | Light | 1 | Yerel, belirgin ve düşük riskli işler |
-| `2–3` | Standard | 2 | Belirsizlik veya alternatif içeren ciddi işler |
-| `4–5` | Deep | 3 | Muğlak, birçok alanı etkileyen, riskli veya çok durumlu işler |
+### FANOUT
 
-Bu sınırlar hedef değil, üst limittir. Kanıt kabul kriterlerini destekliyorsa süreç erkenden durur.
+En fazla 3 bağımsız subagent kullanır. Repository genelindeki audit, karmaşık regression veya ayrılabilir kanıt alanları olan mimari kararlar içindir. Görevin yalnızca zor olması yeterli değildir.
 
-## Depo yapısı
+Subagent'lar tekrar eden implementation üzerinde değil, **bilgi üzerinde** yarışır. Main karar vermeden önce kritik receipt'leri doğrular.
+
+## Repository yapısı
 
 ```text
 LunaMaxxing/
 ├─ .github/workflows/test.yml
-├─ skills/
-│  └─ lunamaxxing/
-│     ├─ SKILL.md
-│     ├─ agents/openai.yaml
-│     ├─ references/
-│     └─ scripts/
+├─ evals/routing-scenarios.json
+├─ skills/lunamaxxing/
+│  ├─ SKILL.md
+│  ├─ agents/openai.yaml
+│  └─ references/delegation-playbook.md
 ├─ tests/test-lunamaxxing.ps1
 ├─ README.md
 ├─ README.tr.md
@@ -156,23 +112,24 @@ LunaMaxxing/
 └─ LICENSE
 ```
 
-## Güvenlik ve sınırlar
+## Doğrulama
 
-- Skill; yıkıcı işlemler, satın alma, kimlik bilgisi kullanımı, production değişikliği veya kapsam genişletme yetkisi vermez.
-- Model kimliği yalnızca çalışma zamanı verisi doğruladığında veya launcher sabitlediğinde raporlanır.
-- Sırf daha fazla düşünme süresi kazanmak için ayrı worker oluşturulmaz.
-- Ayrı worker'lar ephemeral ve tek seferliktir; kapandıktan sonra resume edilemez.
-- Kullanıcının Codex config'i varsayılan olarak devralınır; izole config opt-in'dir.
-- Bazı CLI parametreleri ve model kimlikleri kullanıcının Codex sürümüne ve hesap erişimine bağlı olabilir.
-- Proje deneyseldir; yüksek etkili işlerde kullanmadan önce iş akışını inceleyin.
+Platformlar arası test; explicit-only davranışını, route tanımlarını, 0–3 sınırını, recursive delegation yasağını, writer sahipliğini, task packet ve structured receipt sözleşmelerini, native child fallback'ini, eski harici-worker mimarisinin kaldırılmasını, README uyumunu ve örnek route senaryolarını kontrol eder.
 
-## Proje durumu
+```powershell
+pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
+```
 
-Mevcut sürüm pratik test ve herkese açık geliştirme için hazırdır. Tekrarlanabilir örnek görevler, Luna Max ile LunaMaxxing karşılaştırmaları, değerlendirme tabloları ve görsel sonuç grafikleri daha sonra eklenecektir.
+## Sınırlar
+
+- Child'ın gerçekten Luna xhigh olarak sabitlenebilmesi runtime desteğine bağlıdır.
+- Skill yalnızca doğrulayabildiği model/effort bilgisini raporlar.
+- Delegation süreci iyileştirir; Luna'yı yapısal olarak daha güçlü bir modele eşitlemez.
+- Yıkıcı işlemler, harici yazmalar, kimlik bilgileri, satın almalar ve production değişiklikleri normal yetki sınırlarına tabidir.
 
 ## Katkıda bulunma
 
-Issue'lar ve odaklı pull request'ler kabul edilir. Ayrıntılar için [CONTRIBUTING.md](CONTRIBUTING.md) dosyasına bakın.
+Odaklı issue ve pull request'ler kabul edilir. Ayrıntılar için [CONTRIBUTING.md](CONTRIBUTING.md) dosyasına bak.
 
 ## Lisans
 
