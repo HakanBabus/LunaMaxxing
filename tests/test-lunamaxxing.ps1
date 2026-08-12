@@ -75,7 +75,7 @@ try {
     $originalPath = $env:Path
     $originalCapturePath = $env:LUNAMAXXING_CAPTURE_PATH
     try {
-        $env:Path = "$fakeBinDirectory;$originalPath"
+        $env:Path = "$fakeBinDirectory$([System.IO.Path]::PathSeparator)$originalPath"
         $env:LUNAMAXXING_CAPTURE_PATH = $capturePath
         & $launcher -Prompt $prompt -Workdir $repoRoot -Sandbox read-only -OutputLastMessage $outputRelativePath
     }
