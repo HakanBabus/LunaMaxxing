@@ -23,6 +23,8 @@ $launcher = Join-Path (Join-Path $skillRoot 'scripts') 'invoke-lunamaxxing.ps1'
 $contractPath = Join-Path (Join-Path $skillRoot 'references') 'luna-max-contract.md'
 $skillPath = Join-Path $skillRoot 'SKILL.md'
 $promptPath = [System.IO.Path]::GetTempFileName()
+$outputDirectoryName = 'lunamaxxing-test-output'
+$outputRelativePath = Join-Path $outputDirectoryName 'answer.md'
 $marker = 'LUNAMAXXING_WORKER_ACTIVE=true'
 $unicodeSample = [string]::Concat(
     [char]0x011f, [char]0x015f, [char]0x0131, [char]0x0130,
@@ -39,6 +41,7 @@ try {
     try {
         $defaultRun = & $launcher -PromptFile $promptPath -Workdir $repoRoot -Sandbox read-only -DryRun | ConvertFrom-Json
         $isolatedRun = & $launcher -PromptFile $promptPath -Workdir $repoRoot -Sandbox read-only -IsolatedConfig -DryRun | ConvertFrom-Json
+        $outputRun = & $launcher -Prompt $prompt -Workdir $repoRoot -OutputLastMessage $outputRelativePath -DryRun | ConvertFrom-Json
     }
     finally {
         Pop-Location
@@ -60,6 +63,8 @@ try {
     Assert-True ([System.IO.Path]::IsPathRooted($defaultRun.ContractPath)) 'contract path must be absolute'
     Assert-True ([System.IO.Path]::IsPathRooted($defaultRun.ModulesDirectory)) 'module directory must be absolute'
     Assert-True (-not [bool]$defaultRun.ModelSessionStarted) 'dry-run must never start a model session'
+    Assert-True ($outputRun.OutputLastMessage -eq (Join-Path $repoRoot $outputRelativePath)) 'relative output path must resolve from workdir'
+    Assert-True (-not (Test-Path -LiteralPath (Join-Path $repoRoot $outputDirectoryName))) 'dry-run must not create the output directory'
 
     $contract = Get-Content -Raw -Encoding UTF8 -LiteralPath $contractPath
     $skill = Get-Content -Raw -Encoding UTF8 -LiteralPath $skillPath

@@ -105,15 +105,15 @@ if ($Json) {
 }
 
 $resolvedOutput = $null
+$outputDirectoryToCreate = $null
 if ($OutputLastMessage) {
-    $outputParent = Split-Path -Parent $OutputLastMessage
-    if ($outputParent) {
-        $resolvedOutputParent = (Resolve-Path -LiteralPath $outputParent -ErrorAction Stop).Path
-        $resolvedOutput = Join-Path $resolvedOutputParent (Split-Path -Leaf $OutputLastMessage)
+    if ([System.IO.Path]::IsPathRooted($OutputLastMessage)) {
+        $resolvedOutput = [System.IO.Path]::GetFullPath($OutputLastMessage)
     }
     else {
-        $resolvedOutput = Join-Path $resolvedWorkdir $OutputLastMessage
+        $resolvedOutput = [System.IO.Path]::GetFullPath((Join-Path $resolvedWorkdir $OutputLastMessage))
     }
+    $outputDirectoryToCreate = Split-Path -Parent $resolvedOutput
     $arguments += @('-o', $resolvedOutput)
 }
 
@@ -148,6 +148,10 @@ if ($DryRun) {
 
 if (-not $codexCommand) {
     throw 'Codex CLI was not found. Install Codex or add the codex executable to PATH before starting a Luna Max worker.'
+}
+
+if ($outputDirectoryToCreate -and -not (Test-Path -LiteralPath $outputDirectoryToCreate -PathType Container)) {
+    New-Item -ItemType Directory -Path $outputDirectoryToCreate -Force | Out-Null
 }
 
 $effectivePrompt | & $codexCommand.Source @arguments

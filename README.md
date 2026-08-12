@@ -95,6 +95,8 @@ Use $lunamaxxing in a separate pinned Luna Max CLI worker for this task.
 
 Separate workers are intentionally **one-shot and non-resumable**. Each explicit request authorizes one ephemeral worker. They inherit your normal Codex configuration, including configured MCP servers and preferences; request isolated config explicitly when that is the desired constraint.
 
+`-OutputLastMessage` accepts an absolute path or a path relative to `-Workdir`; the launcher creates a missing output directory only for a real worker run, never during `-DryRun`.
+
 <details>
 <summary><strong>More example prompts</strong></summary>
 

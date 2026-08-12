@@ -95,6 +95,8 @@ Use $lunamaxxing in a separate pinned Luna Max CLI worker for this task.
 
 Ayrı worker'lar bilinçli olarak **tek seferliktir ve resume edilemez**. Her açık istek yalnızca bir ephemeral worker'a yetki verir. Normal Codex config'i, tanımlı MCP sunucuları ve tercihler varsayılan olarak devralınır; config izolasyonu gerekiyorsa ayrıca açıkça istenmelidir.
 
+`-OutputLastMessage` mutlak bir yolu veya `-Workdir` göreli bir yolu kabul eder. Launcher, eksik çıktı klasörünü yalnızca gerçek worker çalışırken oluşturur; `-DryRun` hiçbir şey yazmaz.
+
 <details>
 <summary><strong>Daha fazla örnek prompt</strong></summary>
 
