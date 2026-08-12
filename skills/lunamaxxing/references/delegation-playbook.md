@@ -1,6 +1,17 @@
 # Native Delegation Playbook
 
-Use this reference only when delegation is selected or a structured investigation template is useful. `SKILL.md` is the source of truth for routing, limits, writer ownership, and model fallback.
+Use this reference only when delegation is selected or a structured investigation template is useful. `SKILL.md` is the source of truth for routing, limits, writer ownership, and strict model verification.
+
+## Delegation preflight
+
+Delegate only when all conditions pass:
+
+1. Native subagent capability is available.
+2. The child can be explicitly selected as `gpt-5.6-luna` with `xhigh` reasoning.
+3. That selection can be enforced and reliably verified, preferably from returned runtime metadata.
+4. The run still has room within its maximum of 3 total child sessions.
+
+Merely requesting Luna xhigh does not establish that it was used. If any condition fails, do not spawn and continue DIRECT. Never inherit a different model or effort, and never create an external fallback. **Unverified xhigh = no delegation.**
 
 ## Task packet
 
@@ -17,7 +28,7 @@ FORBIDDEN_ACTIONS:
 EXPECTED_OUTPUT:
 ```
 
-Always include `Do not create subagents.` Default `FORBIDDEN_ACTIONS` to implementation, external writes, destructive actions, and scope expansion unless explicitly authorized. Do not leak a preferred conclusion or ask for hidden chain-of-thought.
+Always include `Do not create subagents.` Set `FORBIDDEN_ACTIONS` to implementation, file modification, external writes, destructive actions, and scope expansion. Every child is read-only. Do not leak a preferred conclusion or ask for hidden chain-of-thought.
 
 ## Structured receipt
 
@@ -33,15 +44,16 @@ RISKS:
 RECOMMENDED_NEXT_ACTION:
 ```
 
-For an explicitly authorized writer, also require:
-
-```text
-FILES_CHANGED:
-TESTS_RUN:
-VALIDATION_RESULT:
-```
-
 Main checks material claims before implementation or final reporting.
+
+## Child lifecycle
+
+- `DONE` → use the receipt after checking material claims.
+- `DONE_WITH_CONCERNS` → main evaluates the concerns before using the receipt.
+- `NEEDS_CONTEXT` → main may send at most one bounded follow-up to the same child; it consumes no new session, but the original child still counts toward the total budget.
+- `BLOCKED` or failed → do not open an automatic replacement child.
+- Treat a completed child as closed.
+- A failure never grants another child session or resets the maximum of 3 total sessions.
 
 ## Bug investigation
 
@@ -70,4 +82,4 @@ Main merges duplicates, rejects speculation, verifies evidence, calibrates sever
 
 ## Writer ownership
 
-Default every child to read-only investigation. Delegate implementation only when ownership is explicit and disjoint, such as `packages/auth/**` versus `packages/player/**`. Stop or re-scope work immediately if file ownership begins to overlap.
+Every child is read-only. Main Luna Max is the only writer and owns all implementation, file changes, validation, and final reporting. LunaMaxxing supports parallel investigation and review, not parallel coding.

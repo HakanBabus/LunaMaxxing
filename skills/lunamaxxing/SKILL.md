@@ -13,12 +13,11 @@ Read `references/delegation-playbook.md` before delegating. For DIRECT work, fol
 
 - Run only after explicit skill invocation. Keep `allow_implicit_invocation: false`.
 - Main owns context, decisions, implementation by default, validation, and the final response.
-- Use **0–2 native subagents by default** and **never exceed 3 concurrent subagents**.
+- Use **0–2 native subagents by default**. Across one `$lunamaxxing` run, never exceed **3 total child sessions** or **3 concurrent children**. Reviewers, retries, and follow-ups all consume this same total budget.
 - Do not allow recursive delegation. Tell every subagent not to create another agent.
 - Delegate for new information, independent verification, or meaningful parallel progress—not ceremony.
-- Subagents investigate and review by default. Main is the default writer.
-- Permit parallel implementation only for explicitly disjoint file ownership. At any time, overlapping files have exactly one writer.
-- Prefer `gpt-5.6-luna` with `xhigh` reasoning for child agents only when the native runtime reliably supports that exact override. Otherwise use the native capacity available or skip delegation, and report the limitation without claiming an unverified model.
+- Every subagent is read-only. **Main Luna Max is the only writer.** Delegation is for investigation and review, never parallel implementation.
+- Delegate only when the native runtime can explicitly select **`gpt-5.6-luna` with `xhigh` reasoning** for the child and reliably verify that selection, preferably through returned runtime metadata. A requested override is not proof. If selection cannot be enforced or verified, choose DIRECT. **Unverified xhigh = no delegation.**
 - Never create a separate process to obtain a preferred child model.
 - Preserve repository instructions, user work, authorization boundaries, and evidence integrity.
 
@@ -32,19 +31,19 @@ Use no subagent when the task is small, deterministic, low risk, or not meaningf
 
 ### DELEGATED
 
-Use 1–2 focused subagents when isolated investigation, an alternative, or independent review can materially improve the result.
+Use 1–2 focused, verified Luna xhigh subagents when isolated investigation, an alternative, or independent review can materially improve the result.
 
 `Main -> focused receipts -> synthesize -> implement -> verify`
 
 ### FANOUT
 
-Use up to 3 concurrent subagents only when the task has genuinely independent workstreams, such as a repository-wide audit or complex cross-system investigation. Difficulty alone is insufficient.
+Use up to 3 verified Luna xhigh subagents only when the task has genuinely independent workstreams, such as a repository-wide audit or complex cross-system investigation. The limit is 3 total sessions for the whole run, not a refillable concurrency window. Difficulty alone is insufficient.
 
 `Main -> independent specialist receipts -> deduplicate and verify -> decide -> implement -> verify`
 
 ## Delegate deliberately
 
-Before spawning, answer: **Will isolated context produce new evidence, independent validation, or useful parallel progress?** If not, choose DIRECT.
+Before spawning, confirm both: **Will isolated context produce new evidence, independent validation, or useful parallel progress?** and **Can this child be selected and verified as Luna xhigh?** If either answer is no—or the user forbids subagents—choose DIRECT.
 
 Give each subagent a narrow task packet from the playbook. Divide work by information lane—architecture, runtime flow, regressions, tests, or hypothesis challenge—instead of asking several agents to implement the same change. Two independent investigators may examine the same uncertain bug when reasoning diversity is the point.
 
@@ -57,7 +56,7 @@ Treat every receipt as a claim, not proof. Main verifies critical findings using
 3. Select DIRECT, DELEGATED, or FANOUT.
 4. If delegating, assign bounded scopes and collect structured receipts.
 5. Synthesize evidence and choose one coherent approach.
-6. Implement in main unless disjoint ownership justifies a delegated writer.
+6. Implement only in main. Children remain read-only investigators or reviewers.
 7. Run targeted checks, inspect actual behavior or artifacts when relevant, and check nearby regressions.
 8. Iterate only for a failed acceptance criterion, new material evidence, or a regression.
 
@@ -69,7 +68,7 @@ Lead with the user outcome. Summarize decisive evidence, changes, validation, an
 
 ```text
 Route: DELEGATED
-Subagents: 2 native investigators (requested Luna xhigh; runtime verified/unverified)
+Subagents: 2 verified native Luna xhigh investigators
 Validation: passed
 ```
 
