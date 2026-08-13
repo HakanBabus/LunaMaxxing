@@ -32,6 +32,9 @@ LunaMaxxing, **Luna Max**'ın zor işleri araştırması, karara bağlaması, uy
 
 Native Luna xhigh açıkça seçilemiyor, enforce edilemiyor ve güvenilir biçimde doğrulanamıyorsa görev **DIRECT** kalır. Yalnızca override istemek kanıt değildir. Başka bir model inherit edilmez ve harici CLI/process fallback kullanılmaz.
 
+> [!NOTE]
+> **DIRECT yüzeysel çalışma demek değildir.** Routing ile çalışma derinliği ayrı kararlardır. Büyük bir web game, uygulama veya repository geneli görev xhigh doğrulanamadığı için delegation yapamıyorsa Main projeyi hızlı bir geçişe indirgemek yerine milestone tabanlı **DEEP** execution ile sürdürür.
+
 ## Neden LunaMaxxing?
 
 Luna Max, dikkatli çalışmaya daha fazla zaman ayırmanın ekonomik olduğu bir modeldir. LunaMaxxing bu avantajı modele yalnızca “daha çok düşün” demek yerine sınırlı ve denetlenebilir bir iş akışına dönüştürür.
@@ -90,6 +93,8 @@ flowchart TD
     D --> I["Main uygular ve test eder"]
     H --> I
 ```
+
+Capability fallback durumunda doğal topoloji bilgi olarak korunur: `Route: DIRECT (natural topology: FANOUT)` ve `Depth: DEEP`. Main faydalı kanıt alanlarını daha sonra sırayla işler.
 
 ### Uyarlanabilir rotalar
 
@@ -189,7 +194,9 @@ LunaMaxxing/
 ├─ skills/lunamaxxing/
 │  ├─ SKILL.md                         # Temel politika ve routing
 │  ├─ agents/openai.yaml               # Codex skill metadata
-│  └─ references/delegation-playbook.md # Task packet, receipt ve lifecycle
+│  └─ references/
+│     ├─ delegation-playbook.md         # Task packet, receipt ve lifecycle
+│     └─ direct-deep-playbook.md        # Büyük DIRECT fallback execution
 ├─ evals/
 │  ├─ routing-scenarios.json           # Davranış senaryoları
 │  └─ evaluate-routing.ps1             # Hafif routing evaluator
@@ -197,7 +204,7 @@ LunaMaxxing/
 └─ .github/workflows/test.yml          # Windows + Ubuntu CI
 ```
 
-Önce [temel skill politikasını](skills/lunamaxxing/SKILL.md), task packet, receipt ve lifecycle ayrıntıları için ardından [delegation playbook'unu](skills/lunamaxxing/references/delegation-playbook.md) okuyabilirsin.
+Önce [temel skill politikasını](skills/lunamaxxing/SKILL.md) okuyabilirsin. Reference belgeleri [native delegation](skills/lunamaxxing/references/delegation-playbook.md) ve [derin DIRECT execution](skills/lunamaxxing/references/direct-deep-playbook.md) ayrıntılarını içerir.
 
 ## Sınırlar
 

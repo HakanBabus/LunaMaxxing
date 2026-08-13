@@ -13,6 +13,7 @@ $skillRoot = Join-Path (Join-Path $repoRoot 'skills') 'lunamaxxing'
 $skill = Get-Content -Raw -Encoding UTF8 (Join-Path $skillRoot 'SKILL.md')
 $metadata = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path $skillRoot 'agents') 'openai.yaml')
 $playbook = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path $skillRoot 'references') 'delegation-playbook.md')
+$directDeep = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path $skillRoot 'references') 'direct-deep-playbook.md')
 $readmeEn = Get-Content -Raw -Encoding UTF8 (Join-Path $repoRoot 'README.md')
 $readmeTr = Get-Content -Raw -Encoding UTF8 (Join-Path $repoRoot 'README.tr.md')
 $workflow = Get-Content -Raw -Encoding UTF8 (Join-Path (Join-Path (Join-Path $repoRoot '.github') 'workflows') 'test.yml')
@@ -29,6 +30,14 @@ Assert-True ($skill -match 'Every subagent is read-only') 'all children must be 
 Assert-True ($skill -match 'Main Luna Max is the only writer') 'main must be the only writer'
 Assert-True ($skill -match 'Unverified xhigh = no delegation') 'strict xhigh fallback must be explicit'
 Assert-True ($skill -match 'requested override is not proof') 'requested xhigh must not count as verification'
+Assert-True ($skill -match 'DIRECT does not mean shallow') 'DIRECT must not imply shallow execution'
+Assert-True ($skill -match 'Choose \*\*route\*\* and \*\*depth\*\* separately') 'route and depth must be separate decisions'
+Assert-True ($skill -match 'DIRECT with the original depth preserved') 'strict xhigh fallback must preserve task depth'
+Assert-True ($skill -match 'direct-deep-playbook\.md') 'substantial DIRECT fallback must load its playbook'
+
+foreach ($rule in @('No delegation does not mean reduced work', 'Define the finish line', 'Create bounded milestones', 'Prove the core path early', 'Validate proportionally', 'Perform a fresh final review', 'local web games')) {
+    Assert-True ($directDeep.Contains($rule)) "DIRECT-DEEP playbook missing: $rule"
+}
 
 foreach ($field in @('GOAL:', 'SCOPE:', 'RELEVANT_PATHS:', 'KNOWN_EVIDENCE:', 'QUESTION_TO_ANSWER:', 'CONSTRAINTS:', 'FORBIDDEN_ACTIONS:', 'EXPECTED_OUTPUT:')) {
     Assert-True ($playbook.Contains($field)) "task packet missing $field"
@@ -71,7 +80,7 @@ foreach ($term in $oldWriterTerms) {
 }
 
 foreach ($doc in @($readmeEn, $readmeTr)) {
-    foreach ($term in @('explicit', 'DIRECT', 'DELEGATED', 'FANOUT', 'xhigh', 'read-only', '3 total')) {
+    foreach ($term in @('explicit', 'DIRECT', 'DELEGATED', 'FANOUT', 'xhigh', 'read-only', '3 total', 'DEEP')) {
         Assert-True ($doc.Contains($term)) "README missing shared behavior: $term"
     }
 }

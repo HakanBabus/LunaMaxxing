@@ -32,6 +32,9 @@ LunaMaxxing is a Codex skill that gives **Luna Max** a disciplined way to invest
 
 If native Luna xhigh cannot be explicitly selected, enforced, and reliably verified, the task stays **DIRECT**. A requested override is not proof. There is no inherited substitute model and no external CLI/process fallback.
 
+> [!NOTE]
+> **DIRECT does not mean shallow.** Routing and execution depth are separate. If a large web game, application, or repository-wide task cannot delegate because xhigh is unverified, Main continues with **DEEP** milestone-based execution instead of reducing the project to a quick pass.
+
 ## Why LunaMaxxing?
 
 Luna Max is inexpensive enough to spend more time on careful work. LunaMaxxing turns that advantage into a bounded workflow instead of simply asking the model to “think harder.”
@@ -90,6 +93,8 @@ flowchart TD
     D --> I["Main implements and validates"]
     H --> I
 ```
+
+For a capability fallback, LunaMaxxing preserves the natural topology as context: `Route: DIRECT (natural topology: FANOUT)` and `Depth: DEEP`. Main then processes the useful evidence lanes sequentially.
 
 ### Adaptive routes
 
@@ -189,7 +194,9 @@ LunaMaxxing/
 ├─ skills/lunamaxxing/
 │  ├─ SKILL.md                         # Core policy and routing
 │  ├─ agents/openai.yaml               # Codex skill metadata
-│  └─ references/delegation-playbook.md # Task packets, receipts, lifecycle
+│  └─ references/
+│     ├─ delegation-playbook.md         # Task packets, receipts, lifecycle
+│     └─ direct-deep-playbook.md        # Large DIRECT fallback execution
 ├─ evals/
 │  ├─ routing-scenarios.json           # Behavioral cases
 │  └─ evaluate-routing.ps1             # Lightweight routing evaluator
@@ -197,7 +204,7 @@ LunaMaxxing/
 └─ .github/workflows/test.yml          # Windows + Ubuntu CI
 ```
 
-Start with the [core skill policy](skills/lunamaxxing/SKILL.md), then read the [delegation playbook](skills/lunamaxxing/references/delegation-playbook.md) for task packets, receipts, and lifecycle details.
+Start with the [core skill policy](skills/lunamaxxing/SKILL.md). The references cover [native delegation](skills/lunamaxxing/references/delegation-playbook.md) and [deep DIRECT execution](skills/lunamaxxing/references/direct-deep-playbook.md).
 
 ## Limits
 

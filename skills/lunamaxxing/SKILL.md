@@ -7,12 +7,12 @@ description: Orchestrate difficult work with a quality-first Luna Max main sessi
 
 Keep the current session as task owner. Assume the intended main runtime is **`gpt-5.6-luna` with `max` reasoning**, but claim it only when runtime metadata verifies it. Never start an external process to force a model or reasoning level.
 
-Read `references/delegation-playbook.md` before delegating. For DIRECT work, follow the core rules below without loading the playbook unless its templates are useful.
+Read `references/delegation-playbook.md` before delegating. Read `references/direct-deep-playbook.md` when a substantial task must run DIRECT, especially because Luna xhigh cannot be verified.
 
 ## Core invariants
 
 - Run only after explicit skill invocation. Keep `allow_implicit_invocation: false`.
-- Main owns context, decisions, implementation by default, validation, and the final response.
+- Main owns context, decisions, implementation, validation, and the final response.
 - Use **0–2 native subagents by default**. Across one `$lunamaxxing` run, never exceed **3 total child sessions** or **3 concurrent children**. Every spawn and follow-up turn consumes this same total budget, including reviewers and retries.
 - Do not allow recursive delegation. Tell every subagent not to create another agent.
 - Delegate for new information, independent verification, or meaningful parallel progress—not ceremony.
@@ -23,9 +23,19 @@ Read `references/delegation-playbook.md` before delegating. For DIRECT work, fol
 
 ## Select one route
 
+Choose **route** and **depth** separately. Route describes who works; depth describes how much deliberate execution the task needs. **DIRECT does not mean shallow.** Determine the task's natural topology before checking child availability, then apply the xhigh gate.
+
+Use a simple depth classification:
+
+- **LIGHT** — localized and deterministic.
+- **STANDARD** — moderate work with a mostly known path.
+- **DEEP** — multi-milestone product work, cross-system integration, high uncertainty or impact, or repository-wide investigation.
+
+When a task naturally fits DELEGATED or FANOUT but verified Luna xhigh is unavailable, use **DIRECT with the original depth preserved**. For a substantial task, follow the DIRECT-DEEP playbook. Do not shrink the scope, skip milestones, or stop at scaffolding merely because delegation was unavailable.
+
 ### DIRECT
 
-Use no subagent when the task is small, deterministic, low risk, or not meaningfully divisible.
+Use no subagent when the task is small, deterministic, low risk, not meaningfully divisible, forbidden from delegation, or blocked by the strict xhigh gate. Match execution depth to the task rather than the route.
 
 `Main -> inspect -> decide -> implement or answer -> verify`
 
@@ -43,7 +53,7 @@ Use up to 3 verified Luna xhigh subagents only when the task has genuinely indep
 
 ## Delegate deliberately
 
-Before spawning, confirm both: **Will isolated context produce new evidence, independent validation, or useful parallel progress?** and **Can this child be selected and verified as Luna xhigh?** If either answer is no—or the user forbids subagents—choose DIRECT.
+First decide whether the task naturally calls for DIRECT, DELEGATED, or FANOUT based on its workstreams. Then confirm both: **Will isolated context produce new evidence, independent validation, or useful parallel progress?** and **Can this child be selected and verified as Luna xhigh?** If either answer is no—or the user forbids subagents—execute DIRECT while preserving the task's depth and acceptance criteria.
 
 Give each subagent a narrow task packet from the playbook. Divide work by information lane—architecture, runtime flow, regressions, tests, or hypothesis challenge—instead of asking several agents to implement the same change. Two independent investigators may examine the same uncertain bug when reasoning diversity is the point.
 
@@ -53,8 +63,8 @@ Treat every receipt as a claim, not proof. Main verifies critical findings using
 
 1. Inspect primary artifacts and applicable instructions.
 2. Separate observed facts, supported inferences, assumptions, and unknowns.
-3. Select DIRECT, DELEGATED, or FANOUT.
-4. If delegating, assign bounded scopes and collect structured receipts.
+3. Select LIGHT, STANDARD, or DEEP depth; separately identify the natural DIRECT, DELEGATED, or FANOUT topology.
+4. Apply the xhigh gate. If delegation is unavailable, use DIRECT without lowering depth; otherwise assign bounded scopes and collect structured receipts.
 5. Synthesize evidence and choose one coherent approach.
 6. Implement only in main. Children remain read-only investigators or reviewers.
 7. Run targeted checks, inspect actual behavior or artifacts when relevant, and check nearby regressions.
@@ -68,7 +78,16 @@ Lead with the user outcome. Summarize decisive evidence, changes, validation, an
 
 ```text
 Route: DELEGATED
+Depth: DEEP
 Subagents: 2 verified native Luna xhigh investigators
+Validation: passed
+```
+
+For a capability fallback, report it without implying reduced effort:
+
+```text
+Route: DIRECT (verified Luna xhigh unavailable; natural topology was FANOUT)
+Depth: DEEP
 Validation: passed
 ```
 

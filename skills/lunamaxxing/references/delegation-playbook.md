@@ -11,7 +11,7 @@ Delegate only when all conditions pass:
 3. That selection can be enforced and reliably verified, preferably from returned runtime metadata.
 4. The run still has room within its maximum of 3 total child sessions.
 
-Merely requesting Luna xhigh does not establish that it was used. If any condition fails, do not spawn and continue DIRECT. Never inherit a different model or effort, and never create an external fallback. **Unverified xhigh = no delegation.**
+Merely requesting Luna xhigh does not establish that it was used. If any condition fails, do not spawn and continue DIRECT. Preserve the task's previously selected depth; for substantial work, follow `direct-deep-playbook.md`. Never inherit a different model or effort, and never create an external fallback. **Unverified xhigh = no delegation.**
 
 ## Task packet
 
