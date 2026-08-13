@@ -42,6 +42,15 @@ Luna Max is inexpensive enough to spend more time on careful work. LunaMaxxing t
 - **Bounded cost and complexity** — no recursion, no replacement swarm, and no more than 3 total child sessions.
 - **Deliberate verification** — Main checks material claims and validates the final result.
 
+### When it earns its keep
+
+| Reach for `$lunamaxxing` | Keep the normal workflow |
+| --- | --- |
+| Root cause is uncertain or intermittent | The cause and fix are already proven |
+| Several independent parts of a repository need inspection | The task is a linear change in one known area |
+| An architecture choice benefits from an independent challenge | The decision is reversible and low impact |
+| A high-impact change deserves a separate read-only review | Delegation would only repeat Main's work |
+
 ## Install
 
 Ask Codex to install the skill directly from GitHub:
@@ -180,13 +189,15 @@ LunaMaxxing/
 ├─ skills/lunamaxxing/
 │  ├─ SKILL.md                         # Core policy and routing
 │  ├─ agents/openai.yaml               # Codex skill metadata
-│  └─ references/delegation-playbook.md# Task packets, receipts, lifecycle
+│  └─ references/delegation-playbook.md # Task packets, receipts, lifecycle
 ├─ evals/
 │  ├─ routing-scenarios.json           # Behavioral cases
 │  └─ evaluate-routing.ps1             # Lightweight routing evaluator
 ├─ tests/test-lunamaxxing.ps1          # Contract and consistency tests
 └─ .github/workflows/test.yml          # Windows + Ubuntu CI
 ```
+
+Start with the [core skill policy](skills/lunamaxxing/SKILL.md), then read the [delegation playbook](skills/lunamaxxing/references/delegation-playbook.md) for task packets, receipts, and lifecycle details.
 
 ## Limits
 

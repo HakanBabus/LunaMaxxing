@@ -42,6 +42,15 @@ Luna Max, dikkatli çalışmaya daha fazla zaman ayırmanın ekonomik olduğu bi
 - **Sınırlı maliyet ve karmaşıklık** — recursive delegation, replacement sürüsü ve 3 total child session'ı aşmak yoktur.
 - **Bilinçli doğrulama** — Main önemli iddiaları kontrol eder ve final sonucu test eder.
 
+### Ne zaman gerçekten fayda sağlar?
+
+| `$lunamaxxing` kullan | Normal iş akışında kal |
+| --- | --- |
+| Root cause belirsiz veya sorun aralıklıysa | Sebep ve çözüm zaten kanıtlandıysa |
+| Repository'nin birkaç bağımsız alanı incelenecekse | Görev bilinen tek bir alanda doğrusal ilerliyorsa |
+| Mimari karar bağımsız bir challenge'dan fayda görecekse | Karar geri alınabilir ve düşük etkiliyse |
+| Yüksek etkili değişiklik ayrı bir read-only review hak ediyorsa | Delegation yalnızca Main'in işini tekrar edecekse |
+
 ## Kurulum
 
 Codex'ten skilli doğrudan GitHub üzerinden kurmasını iste:
@@ -180,13 +189,15 @@ LunaMaxxing/
 ├─ skills/lunamaxxing/
 │  ├─ SKILL.md                         # Temel politika ve routing
 │  ├─ agents/openai.yaml               # Codex skill metadata
-│  └─ references/delegation-playbook.md# Task packet, receipt ve lifecycle
+│  └─ references/delegation-playbook.md # Task packet, receipt ve lifecycle
 ├─ evals/
 │  ├─ routing-scenarios.json           # Davranış senaryoları
 │  └─ evaluate-routing.ps1             # Hafif routing evaluator
 ├─ tests/test-lunamaxxing.ps1          # Sözleşme ve tutarlılık testleri
 └─ .github/workflows/test.yml          # Windows + Ubuntu CI
 ```
+
+Önce [temel skill politikasını](skills/lunamaxxing/SKILL.md), task packet, receipt ve lifecycle ayrıntıları için ardından [delegation playbook'unu](skills/lunamaxxing/references/delegation-playbook.md) okuyabilirsin.
 
 ## Sınırlar
 
