@@ -2,54 +2,56 @@
 
 # LunaMaxxing
 
-**Luna Max için sınırlı Luna xhigh subagent'larla explicit, kalite odaklı Codex orchestration.**
+### Luna Max daha bilinçli çalışsın. Ama yalnızca sen istediğinde.
 
-[![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=for-the-badge)](https://developers.openai.com/codex/)
-[![Test](https://img.shields.io/github/actions/workflow/status/HakanBabus/LunaMaxxing/test.yml?branch=main&style=for-the-badge&label=testler)](https://github.com/HakanBabus/LunaMaxxing/actions/workflows/test.yml)
-[![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-22c55e?style=for-the-badge)](LICENSE)
+**Luna Max için sınırlı Luna xhigh subagent'lara sahip, açıkça çağrılan ve kaliteyi önceleyen Codex orkestrasyonu.**
 
-[English](README.md) · [Türkçe](README.tr.md) · [Kurulum](#kurulum) · [Rotalar](#uyarlanabilir-rotalar)
+[![Codex Skill](https://img.shields.io/badge/Codex-Skill-111827?style=flat-square)](https://developers.openai.com/codex/)
+[![Testler](https://img.shields.io/github/actions/workflow/status/HakanBabus/LunaMaxxing/test.yml?branch=main&style=flat-square&label=testler)](https://github.com/HakanBabus/LunaMaxxing/actions/workflows/test.yml)
+[![Lisans: MIT](https://img.shields.io/badge/lisans-MIT-22c55e?style=flat-square)](LICENSE)
+
+[English](README.md) · [Türkçe](README.tr.md) · [Kurulum](#kurulum) · [Nasıl çalışır?](#nasıl-çalışır) · [Güvenlik sözleşmesi](#güvenlik-sözleşmesi)
 
 </div>
 
 ---
 
-LunaMaxxing, **Luna Max ana oturumunu** görevin sahibi olarak tutar; delegation gerçekten fayda sağlayacaksa sınırlı araştırma, bağımsız doğrulama veya review işlerini native **Luna xhigh subagent'lara** verir.
-
-Bu bir model değişimi değildir ve ayrı process'ler başlatmaz. Her görevi ağır bir pipeline'a çevirmeden kanıt, bağımsız kontrol ve bilinçli sentezden daha fazla fayda almayı sağlayan sade bir orchestration politikasıdır.
+LunaMaxxing, **Luna Max**'ın zor işleri araştırması, karara bağlaması, uygulaması ve doğrulaması için disiplinli bir çalışma düzeni sunan Codex skillidir. Mevcut Luna Max oturumu her zaman kontrolü elinde tutar. Native **Luna xhigh** child'lar yalnızca odaklı araştırma ve review için, runtime seçilen model ile effort seviyesini gerçekten kanıtlayabiliyorsa kullanılır.
 
 > [!IMPORTANT]
-> LunaMaxxing **yalnızca açıkça çağrılırsa** çalışır. `$lunamaxxing` kullanmalı veya Codex'e doğrudan lunamaxxing skillini kullanmasını söylemelisin. Luna Max, kalite, derin analiz, planlama, debugging veya doğrulama kelimeleri tek başına skill'i etkinleştirmez.
+> **Kendiliğinden hiçbir zaman devreye girmez.** LunaMaxxing explicit-only çalışır: `$lunamaxxing` yazmalı veya Codex'e doğrudan lunamaxxing skillini kullanmasını söylemelisin. “Daha kaliteli yap”, “derin analiz et” ya da “iyi planla” gibi istekler skill'i etkinleştirmez.
 
-## Temel model
+## 30 saniyede temel fikir
 
-| Rol | Tercih edilen runtime | Sorumluluk |
+| | Ana oturum | Native child'lar |
 | --- | --- | --- |
-| Main | Luna Max (`gpt-5.6-luna`, `max`) | Context, karar, yazma, doğrulama ve final cevap |
-| Native subagent | Yalnızca doğrulanmış Luna (`gpt-5.6-luna`, `xhigh`) | Read-only araştırma, challenge veya review |
+| Runtime | Luna Max · `gpt-5.6-luna` · `max` | Yalnızca doğrulanmış `gpt-5.6-luna` · `xhigh` |
+| Görev | İşin sahibi, karar verici, doğrulayıcı | Odaklı araştırmacı veya reviewer |
+| Dosya yazabilir mi? | **Evet — Main tek writer** | **Hayır — her zaman read-only** |
+| Sınır | Tek ana oturum | Normalde 0–2, en fazla **3 total** |
 
-Delegation yalnızca native runtime child için Luna xhigh'ı açıkça seçebiliyor, enforce edebiliyor ve tercihen returned runtime metadata ile güvenilir biçimde doğrulayabiliyorsa kullanılabilir. Yalnızca xhigh istemek, kullanıldığının kanıtı değildir. **Doğrulanmamış xhigh → DIRECT; delegation yok.** Başka child model/effort inherit edilmez ve harici CLI/process fallback oluşturulmaz.
+Native Luna xhigh açıkça seçilemiyor, enforce edilemiyor ve güvenilir biçimde doğrulanamıyorsa görev **DIRECT** kalır. Yalnızca override istemek kanıt değildir. Başka bir model inherit edilmez ve harici CLI/process fallback kullanılmaz.
 
-## Neden kullanılır?
+## Neden LunaMaxxing?
 
-- **Explicit-only:** sürpriz biçimde devreye girmez.
-- **Uyarlanabilir delegation:** normalde 0–2 child; çalışma başına en fazla 3 total session ve 3 concurrent child.
-- **Main tek writer:** bütün subagent'lar read-only'dir; implementation ve dosya değişiklikleri Main Luna Max'a aittir.
-- **Recursive delegation yok:** yalnızca main subagent oluşturabilir.
-- **Sınırlı lifecycle:** reviewer, retry ve follow-up çağrıları aynı total bütçeden düşer; başarısız child otomatik değiştirilmez.
-- **Kanıt receipt'leri:** her sonuç bulgu, kanıt, güven, risk ve sonraki eylem içerir.
-- **Az bürokrasi:** küçük ve açık görevler doğrudan çözülür.
+Luna Max, dikkatli çalışmaya daha fazla zaman ayırmanın ekonomik olduğu bir modeldir. LunaMaxxing bu avantajı modele yalnızca “daha çok düşün” demek yerine sınırlı ve denetlenebilir bir iş akışına dönüştürür.
+
+- **Önce kanıt** — bulgular dosya, komut, gerçek davranış veya kontrol edilebilir başka bir kanıta dayanır.
+- **Göreve göre derinlik** — küçük işler küçük kalır; belirsiz işler faydalıysa bağımsız araştırma alır.
+- **Tek ve tutarlı uygulama** — child'lar araştırır ve review yapar; bütün değişiklikleri Main yapar.
+- **Sınırlı maliyet ve karmaşıklık** — recursive delegation, replacement sürüsü ve 3 total child session'ı aşmak yoktur.
+- **Bilinçli doğrulama** — Main önemli iddiaları kontrol eder ve final sonucu test eder.
 
 ## Kurulum
 
-Codex'ten bu repository'den yüklemesini iste:
+Codex'ten skilli doğrudan GitHub üzerinden kurmasını iste:
 
 ```text
 Use $skill-installer to install lunamaxxing from
 https://github.com/HakanBabus/LunaMaxxing/tree/main/skills/lunamaxxing
 ```
 
-Veya elle yükle:
+İstersen elle de kurabilirsin:
 
 ```powershell
 python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-skill-from-github.py" `
@@ -57,89 +59,140 @@ python "$env:USERPROFILE\.codex\skills\.system\skill-installer\scripts\install-s
   --path skills/lunamaxxing
 ```
 
-## Kullanım
+Ardından isteğine `$lunamaxxing` ile başla:
 
 ```text
-Use $lunamaxxing to investigate this intermittent state-loss bug, implement the verified fix, and test regressions.
+$lunamaxxing Bu aralıklı state kaybı sorununu araştır, doğrulanmış düzeltmeyi uygula ve regresyon testlerini çalıştır.
 ```
 
-```text
-Bu repository'yi incelemek ve yalnızca kanıtlı sorunları düzeltmek için lunamaxxing skillini kullan.
-```
-
-## Uyarlanabilir rotalar
+## Nasıl çalışır?
 
 ```mermaid
-flowchart LR
-    A["Açık LunaMaxxing isteği"] --> B{"Luna xhigh seçilip doğrulanabiliyor mu?"}
-    B -->|Hayır| C["DIRECT: yalnızca main"]
-    B -->|Evet| H{"İzole context faydalı kanıt sağlar mı?"}
-    H -->|Hayır| C
-    H -->|Odaklı| D["DELEGATED: 1–2 doğrulanmış read-only child"]
-    H -->|Bağımsız alanlar| E["FANOUT: en fazla 3 doğrulanmış read-only child"]
-    D --> F["Main doğrular ve sentezler"]
-    E --> F
-    C --> G["Main uygular ve doğrular"]
+flowchart TD
+    A["Açık $lunamaxxing isteği"] --> B{"Doğrulanmış native Luna xhigh var mı?"}
+    B -->|Hayır| D["DIRECT"]
+    B -->|Evet| C{"İzole araştırma fayda sağlar mı?"}
+    C -->|Hayır| D
+    C -->|Tek odaklı alan| E["DELEGATED"]
+    C -->|Bağımsız kanıt alanları| F["FANOUT"]
+    E --> G["Yapılandırılmış read-only receipt'ler"]
     F --> G
+    G --> H["Main doğrular ve karar verir"]
+    D --> I["Main uygular ve test eder"]
+    H --> I
 ```
 
-### DIRECT
+### Uyarlanabilir rotalar
 
-Subagent yoktur. Typo, küçük fix, açık tek dosya refactor'ü ve doğrusal düşük riskli işler için uygundur.
+| Rota | Child | Ne zaman uygun? | Örnek |
+| --- | ---: | --- | --- |
+| **DIRECT** | 0 | Açık, doğrusal veya bölünemeyen iş | Bilinen typo, root-cause'u kanıtlanmış bug, tek dosya refactor'ü |
+| **DELEGATED** | 1–2 | Bir veya iki odaklı araştırma belirsizliği azaltabilir | Aralıklı state bug'ı, alternatif tasarım kontrolü, final diff review |
+| **FANOUT** | En fazla 3 | Görev gerçekten bağımsız kanıt alanlarına ayrılabilir | Runtime, mimari ve testler olarak bölünen repo geneli audit |
 
-### DELEGATED
+Bir görevin yalnızca zor olması delegation için yeterli değildir. Asıl soru şudur: **İzole context yeni kanıt veya bağımsız doğrulama sağlayacak mı?**
 
-Genellikle 1–2 odaklı, doğrulanmış Luna xhigh subagent kullanır. Belirsiz bug, component'lar arası reconnaissance, bağımsız alternatif veya final diff review için uygundur.
+## Güvenlik sözleşmesi
 
-### FANOUT
+### Strict xhigh doğrulaması
 
-En fazla 3 bağımsız, doğrulanmış Luna xhigh subagent kullanır. Repository genelindeki audit, karmaşık regression veya ayrılabilir kanıt alanları olan mimari kararlar içindir. Görevin yalnızca zor olması yeterli değildir.
+Child yalnızca şu koşulların tamamı sağlanıyorsa oluşturulur:
 
-Sınır aynı anda açık child sayısı değil, çalışma boyunca **3 total child session**'dır. Reviewer, retry ve izin verilen tek bounded follow-up da buna dahildir. Subagent'lar read-only'dir ve implementation yerine **bilgi üzerinde** yarışır. Main kritik receipt'leri doğrular ve tek writer olarak kalır.
+1. Native runtime subagent özelliğini desteklemeli.
+2. Child için `gpt-5.6-luna` ve `xhigh` açıkça seçilebilmeli.
+3. Bu seçim enforce edilebilmeli ve tercihen dönen runtime metadata üzerinden güvenilir biçimde doğrulanabilmeli.
+4. Çalışmanın child-session bütçesinde yer kalmış olmalı.
+
+**Doğrulanmamış xhigh = delegation yok.** Görev ana oturumda DIRECT devam eder.
+
+### Kesin sınırlar
+
+- Varsayılan: **0–2 child**.
+- Üst sınır: Her `$lunamaxxing` çalışmasında **3 total child session** ve **3 concurrent child**.
+- Reviewer ve retry işleri dahil her spawn ve follow-up turu bütçeden düşer.
+- Recursive delegation yasaktır.
+- Başarısız child otomatik olarak yenisiyle değiştirilmez.
 
 ### Child lifecycle
 
-- `DONE`: main receipt'i kontrol edip kullanır.
-- `DONE_WITH_CONCERNS`: main concern'leri değerlendirir.
-- `NEEDS_CONTEXT`: en fazla bir bounded follow-up verilebilir; bu follow-up aynı child-session bütçesinden bir birim düşer.
-- `BLOCKED` veya `FAILED`: otomatik replacement child açılmaz.
+| Receipt durumu | Main'in davranışı |
+| --- | --- |
+| `DONE` | Önemli iddiaları kontrol eder, ardından receipt'i kullanır. |
+| `DONE_WITH_CONCERNS` | Karar vermeden önce concern'leri değerlendirir. |
+| `NEEDS_CONTEXT` | En fazla bir bounded follow-up verir; aynı bütçeden düşer. |
+| `BLOCKED` / `FAILED` | Otomatik replacement child açmaz. |
 
-Tamamlanan child kapalı kabul edilir. Child failure yeni child açma yetkisi vermez.
+Tamamlanan child kapalı kabul edilir. Child failure hiçbir zaman ek bütçe oluşturmaz.
 
-## Repository yapısı
+## Yapılandırılmış devir
+
+Her delegated görev sınırlı bir task packet alır ve yapılandırılmış receipt döndürür:
 
 ```text
-LunaMaxxing/
-├─ .github/workflows/test.yml
-├─ evals/
-│  ├─ evaluate-routing.ps1
-│  └─ routing-scenarios.json
-├─ skills/lunamaxxing/
-│  ├─ SKILL.md
-│  ├─ agents/openai.yaml
-│  └─ references/delegation-playbook.md
-├─ tests/test-lunamaxxing.ps1
-├─ README.md
-├─ README.tr.md
-├─ CONTRIBUTING.md
-└─ LICENSE
+Task packet                         Receipt
+───────────                         ───────
+GOAL                                STATUS
+SCOPE                               SUMMARY
+RELEVANT_PATHS                      FINDINGS
+KNOWN_EVIDENCE                      EVIDENCE
+QUESTION_TO_ANSWER                  CONFIDENCE
+CONSTRAINTS                         RISKS
+FORBIDDEN_ACTIONS                   RECOMMENDED_NEXT_ACTION
+EXPECTED_OUTPUT
+```
+
+Receipt'ler kanıt değil, kontrol edilmesi gereken iddialardır. Doğrulama, implementation ve final cevap her zaman Main'in sorumluluğundadır.
+
+## Daha fazla kullanım örneği
+
+```text
+$lunamaxxing Bu repository'yi kanıta dayalı güvenilirlik sorunları için incele. Yalnızca doğrulanmış bulguları düzelt.
+```
+
+```text
+Lunamaxxing skillini kullan. İki uygulanabilir mimariyi karşılaştır, önemli varsayımları doğrula ve ardından birini uygula.
+```
+
+```text
+$lunamaxxing Bu regresyonu teşhis et. Root cause açık hale gelirse DIRECT devam et.
 ```
 
 ## Doğrulama
 
-Platformlar arası test; explicit-only davranışını, strict xhigh doğrulamasını, 3 total/3 concurrent sınırını, bounded child lifecycle'ını, main-only writer politikasını, task packet ve structured receipt sözleşmelerini, eski process mimarisinin repo genelinden kaldırılmasını, README uyumunu ve çalıştırılabilir routing senaryolarını kontrol eder.
+Hafif test paketi; explicit-only tetiklemeyi, routing davranışını, strict xhigh fallback'ini, total child bütçesini, lifecycle kurallarını, main-only writer politikasını, README uyumunu ve eski process tabanlı mimarinin kaldırıldığını kontrol eder.
 
 ```powershell
 pwsh -NoProfile -File ./tests/test-lunamaxxing.ps1
 ```
 
+Routing senaryoları ayrıca çalıştırılabilir:
+
+```powershell
+pwsh -NoProfile -File ./evals/evaluate-routing.ps1
+```
+
+Testler GitHub Actions üzerinde hem Windows hem Ubuntu'da çalışır.
+
+## Repository haritası
+
+```text
+LunaMaxxing/
+├─ skills/lunamaxxing/
+│  ├─ SKILL.md                         # Temel politika ve routing
+│  ├─ agents/openai.yaml               # Codex skill metadata
+│  └─ references/delegation-playbook.md# Task packet, receipt ve lifecycle
+├─ evals/
+│  ├─ routing-scenarios.json           # Davranış senaryoları
+│  └─ evaluate-routing.ps1             # Hafif routing evaluator
+├─ tests/test-lunamaxxing.ps1          # Sözleşme ve tutarlılık testleri
+└─ .github/workflows/test.yml          # Windows + Ubuntu CI
+```
+
 ## Sınırlar
 
-- Child'ın gerçekten Luna xhigh olarak sabitlenebilmesi runtime desteğine bağlıdır.
-- Luna xhigh enforce edilip güvenilir biçimde doğrulanamıyorsa route DIRECT olur; yalnızca istemek doğrulama değildir.
-- Harici CLI veya process fallback kullanılmaz.
-- Delegation süreci iyileştirir; Luna'yı yapısal olarak daha güçlü bir modele eşitlemez.
-- Yıkıcı işlemler, harici yazmalar, kimlik bilgileri, satın almalar ve production değişiklikleri normal yetki sınırlarına tabidir.
+- Luna xhigh'ın seçilip doğrulanabilmesi runtime desteğine bağlıdır.
+- LunaMaxxing çalışma sürecini iyileştirir; Luna'yı yapısal olarak daha güçlü bir modele eşitlemez.
+- Yıkıcı işlemler, harici yazmalar, kimlik bilgileri, satın almalar ve production değişikliklerinde normal yetki sınırları geçerlidir.
 
 ## Katkıda bulunma
 
